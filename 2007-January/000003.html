@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r58 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-January/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r58%20-%20trunk/src&In-Reply-To=%3C200701180130.l0I1UA9r023385%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000002.html">
+   <LINK REL="Next"  HREF="000004.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r58 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r58%20-%20trunk/src&In-Reply-To=%3C200701180130.l0I1UA9r023385%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r58 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 18 02:30:10 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000002.html">[Spew-changes] r57 - in trunk: . man
+</A></li>
+        <LI>Next message: <A HREF="000004.html">[Spew-changes] r59 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-01-18 02:30:05 +0100 (Thu, 18 Jan 2007)
+New Revision: 58
+
+Modified:
+   trunk/src/spew.cpp
+Log:
+Fixed IA-64 unaligned access problem when processing command-line options.
+
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2007-01-17 05:04:54 UTC (rev 57)
++++ trunk/src/spew.cpp	2007-01-18 01:30:05 UTC (rev 58)
+@@ -542,6 +542,7 @@
+    int writeArg = 0;
+    int readArg = 0;
+    int readAfterWriteArg = 0;
++   int seedArg = 0;
+    int helpArg = 0;
+    int usageArg = 0;
+    int iterationsArg = -1;
+@@ -580,7 +581,7 @@
+       {&quot;rcfile&quot;, 0, POPT_ARG_STRING, &amp;dummyArgStr, 0, &quot;Read command-line options from RCFILE.&quot;, &quot;RCFILE&quot;},
+       {&quot;read&quot;, 0, POPT_ARG_NONE, &amp;readArg, 0, &quot;Read date from FILE.&quot;, NULL},
+       {&quot;read-after-write&quot;, 0, POPT_ARG_NONE, &amp;readAfterWriteArg, 0, &quot;Read back data after writing to FILE.&quot;, NULL},
+-      {&quot;seed&quot;, 'S', POPT_ARG_LONG, &amp;gSeed, 0, &quot;Use SEED for random number seed.&quot;,&quot;SEED&quot;},
++      {&quot;seed&quot;, 'S', POPT_ARG_INT, &amp;seedArg, 0, &quot;Use SEED for random number seed.&quot;,&quot;SEED&quot;},
+       {&quot;sync&quot;, 's', POPT_ARG_NONE, &amp;syncArg, 0, &quot;Use synchronous I/O.&quot;, NULL},
+       {&quot;statistics&quot;, 0, POPT_ARG_NONE, &amp;statisticsArg, 0, &quot;Output statistics (default).&quot;, NULL},
+       {&quot;tui&quot;, 't', POPT_ARG_NONE, &amp;tuiArg, 0, &quot;Use curses-based, terminal user interface.&quot;, NULL},
+@@ -751,6 +752,10 @@
+    if (iterationsArg &gt;= 0)
+       gIterationsToDo = (unsigned int)iterationsArg;
+ 
++   // Seed.
++   if (seedArg &gt;= 0)
++      gSeed = (u32_t)seedArg;
++
+    // TUI.
+    if (noTuiArg)
+       gUseTui = false;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000002.html">[Spew-changes] r57 - in trunk: . man
+</A></li>
+	<LI>Next message: <A HREF="000004.html">[Spew-changes] r59 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,268 @@
+From apers at mail.berlios.de  Sun Feb 28 05:22:50 2010
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sun, 28 Feb 2010 05:22:50 +0100
+Subject: [Spew-changes] r83 - branches/threaded/src
+Message-ID: <201002280422.o1S4MoVp018520@sheep.berlios.de>
+
+Author: apers
+Date: 2010-02-28 05:22:49 +0100 (Sun, 28 Feb 2010)
+New Revision: 83
+
+Modified:
+   branches/threaded/src/Log.cpp
+   branches/threaded/src/NumbersTransfer.cpp
+   branches/threaded/src/RandomTransfer.cpp
+   branches/threaded/src/RandomTransferInfoList.cpp
+   branches/threaded/src/SpewConsole.cpp
+   branches/threaded/src/SpewTuiHelpWindow.cpp
+   branches/threaded/src/SpewTuiProgressWindow.cpp
+   branches/threaded/src/ZerosTransfer.cpp
+   branches/threaded/src/common.cpp
+   branches/threaded/src/common.h
+   branches/threaded/src/spew.cpp
+Log:
+Fixed various compile problem.
+
+
+Modified: branches/threaded/src/Log.cpp
+===================================================================
+--- branches/threaded/src/Log.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/Log.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <stdarg.h>
+ #include <errno.h>
+ #include <signal.h>
+@@ -38,9 +39,9 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ ////////////////////////  Local constants  ////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////
+-int TIMESTAMP_STR_LEN = 19;  // Does not includes space for \0.
+-char LOGFILE_SEPARATOR_CHAR = '#';
+-int LOGFILE_WIDTH = 80;
++static const int TIMESTAMP_STR_LEN = 19;  // Does not includes space for \0.
++static const char LOGFILE_SEPARATOR_CHAR = '#';
++static const int LOGFILE_WIDTH = 80;
+ 
+ #ifdef USE_THREADS
+ //////////////////////////  Log::threadEntryPoint()  //////////////////////////
+
+Modified: branches/threaded/src/NumbersTransfer.cpp
+===================================================================
+--- branches/threaded/src/NumbersTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/NumbersTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 
+
+Modified: branches/threaded/src/RandomTransfer.cpp
+===================================================================
+--- branches/threaded/src/RandomTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/RandomTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 
+
+Modified: branches/threaded/src/RandomTransferInfoList.cpp
+===================================================================
+--- branches/threaded/src/RandomTransferInfoList.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/RandomTransferInfoList.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
++
+ #include "common.h"
+ #include "Random.h"
+ #include "RandomTransferInfoList.h"
+
+Modified: branches/threaded/src/SpewConsole.cpp
+===================================================================
+--- branches/threaded/src/SpewConsole.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewConsole.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,8 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
++
+ #include "common.h"
+ #include "SpewConsole.h"
+ #include "TimeHack.h"
+
+Modified: branches/threaded/src/SpewTuiHelpWindow.cpp
+===================================================================
+--- branches/threaded/src/SpewTuiHelpWindow.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewTuiHelpWindow.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -30,6 +30,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
++
+ #include "common.h"
+ #include "SpewTuiWindow.h"
+ #include "SpewTuiHelpWindow.h"
+
+Modified: branches/threaded/src/SpewTuiProgressWindow.cpp
+===================================================================
+--- branches/threaded/src/SpewTuiProgressWindow.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewTuiProgressWindow.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -23,6 +23,7 @@
+ using namespace std;
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <stdarg.h>
+ #include <ncurses.h>
+ 
+
+Modified: branches/threaded/src/ZerosTransfer.cpp
+===================================================================
+--- branches/threaded/src/ZerosTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/ZerosTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 
+
+Modified: branches/threaded/src/common.cpp
+===================================================================
+--- branches/threaded/src/common.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/common.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <stdarg.h>
+ #include <unistd.h>
+ #include <math.h>
+@@ -70,8 +71,8 @@
+ static const size_t MAX_STR_CHARS = 1024;
+ 
+ 
+-/////////////////////////  basename()  ///////////////////////////////////////
+-const char *basename(char *path)
++/////////////////////////  base_name()  ///////////////////////////////////////
++const char *base_name(char *path)
+ {
+    char *name = strrchr(path, '/');
+    if (name == NULL)
+
+Modified: branches/threaded/src/common.h
+===================================================================
+--- branches/threaded/src/common.h	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/common.h	2010-02-28 04:22:49 UTC (rev 83)
+@@ -53,12 +53,12 @@
+ ///////////////////////////  Typedefs  ///////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+ 
+-typedef enum Verbosity_t 
++typedef enum
+ {
+    VERBOSITY_NONE, 
+    VERBOSITY_SHORT, 
+    VERBOSITY_LONG,
+-};
++}  Verbosity_t;
+ 
+ typedef enum
+ {
+@@ -115,7 +115,7 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////  Functions  //////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+-const char *basename(char *path);
++const char *base_name(char *path);
+ string strPrintf(const char *fmt, ...);
+ string strSignal(int sig);
+ string strError(int error_number);
+
+Modified: branches/threaded/src/spew.cpp
+===================================================================
+--- branches/threaded/src/spew.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/spew.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -142,13 +142,13 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ////////////////////  Function Prototypes  ///////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+-void error_msg(char *fmt, ...);
+-void note(char *fmt, ...);
++void error_msg(const char *fmt, ...);
++void note(const char *fmt, ...);
+ void usage();
+ bool parse_options(int argc, const char **argv, string& cmdArgs);
+ bool validate_options();
+ void end_program(int exitCode);
+-void end_program(int exitCode, char *fmt, ...);
++void end_program(int exitCode, const char *fmt, ...);
+ void cumulative_statistics(const Job *job, 
+                            const CumulativeStatistics *cumStats);
+ void end_statistics(const CumulativeStatistics *cumStats);
+@@ -166,7 +166,7 @@
+ //////////////////////////////////////////////////////////////////////////////
+ 
+ ////////////////////////  error_msg()  ///////////////////////////////////////
+-void error_msg(char *fmt, ...)
++void error_msg(const char *fmt, ...)
+ {
+    fprintf(stderr, "%s: ", gPrgName);
+    va_list ap;
+@@ -178,7 +178,7 @@
+ 
+ 
+ /////////////////////////  note()  ///////////////////////////////////////////
+-void note(char *fmt, ...)
++void note(const char *fmt, ...)
+ {
+    va_list ap;
+    va_start(ap, fmt);
+@@ -277,7 +277,7 @@
+             PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+             PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
+             PATTERN_LOOKUP[DEFAULT_PATTERN]);
+-   fprintf(stdout, outStr);
++   fprintf(stdout, "%s", outStr);
+ 
+    fprintf(stdout, "\nReport bugs to Andrew Patterson <andrew.patterson at hp.com>.\n");
+ }
+@@ -479,7 +479,7 @@
+       rcFilePath = "";
+       if (strncmp(argv[i], "--rcfile", 8) == 0)
+       {
+-         char *eqPos = strrchr(argv[i], '=');
++         const char *eqPos = strrchr(argv[i], '=');
+          if (eqPos == (char *)NULL)
+          {
+             if (i + 1 < argc)
+@@ -900,7 +900,7 @@
+ 
+ 
+ //////////////////////////  end_program()  ////////////////////////////////////
+-void end_program(int exitCode, char *fmt, ...)
++void end_program(int exitCode, const char *fmt, ...)
+ {
+    int rtn;
+    char msg[MAX_TMP_STR_LEN];
+
+
+

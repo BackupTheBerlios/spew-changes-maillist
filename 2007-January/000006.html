@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r61 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-January/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r61%20-%20trunk/src&In-Reply-To=%3C200701220032.l0M0WhxG021415%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000007.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r61 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r61%20-%20trunk/src&In-Reply-To=%3C200701220032.l0M0WhxG021415%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r61 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Mon Jan 22 01:32:43 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Spew-changes] r60 - trunk/src
+</A></li>
+        <LI>Next message: <A HREF="000007.html">[Spew-changes] r62 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-01-22 01:32:43 +0100 (Mon, 22 Jan 2007)
+New Revision: 61
+
+Modified:
+   trunk/src/Transfer.h
+Log:
+Fix for bug #9777
+
+Use HAVE_DIRECT_IO instead of __linux when checking for direct I/O
+support.  This is a fix for building on GNU/kFreeBSD Debian with a FreeBSD kernel).
+
+
+Modified: trunk/src/Transfer.h
+===================================================================
+--- trunk/src/Transfer.h	2007-01-21 08:03:18 UTC (rev 60)
++++ trunk/src/Transfer.h	2007-01-22 00:32:43 UTC (rev 61)
+@@ -34,7 +34,7 @@
+ public:
+    static const capacity_t BUFFER_SIZE_INCREMENT = 512LLU;
+    static const capacity_t OFFSET_INCREMENT = BUFFER_SIZE_INCREMENT;
+-#ifdef __linux
++#ifdef HAVE_DIRECT_IO
+    static const capacity_t DIRECTIO_BUFFER_SIZE_INCREMENT = 1024LLU;
+ #endif
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Spew-changes] r60 - trunk/src
+</A></li>
+	<LI>Next message: <A HREF="000007.html">[Spew-changes] r62 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

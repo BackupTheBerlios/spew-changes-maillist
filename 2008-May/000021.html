@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r76 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2008-May/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r76%20-%20trunk/src&In-Reply-To=%3C200805092238.m49McPZx001589%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000020.html">
+   <LINK REL="Next"  HREF="000022.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r76 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r76%20-%20trunk/src&In-Reply-To=%3C200805092238.m49McPZx001589%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r76 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Sat May 10 00:38:25 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000020.html">[Spew-changes] r75 - trunk/src
+</A></li>
+        <LI>Next message: <A HREF="000022.html">[Spew-changes] r77 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#21">[ date ]</a>
+              <a href="thread.html#21">[ thread ]</a>
+              <a href="subject.html#21">[ subject ]</a>
+              <a href="author.html#21">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2008-05-10 00:38:24 +0200 (Sat, 10 May 2008)
+New Revision: 76
+
+Modified:
+   trunk/src/SpewConsole.cpp
+   trunk/src/SpewConsole.h
+   trunk/src/SpewDisplay.h
+   trunk/src/SpewTui.cpp
+   trunk/src/SpewTui.h
+   trunk/src/spew.cpp
+Log:
+Fixed a problem where the IOPS calculation for a job was being based on
+cumulative transfers for every job.
+
+
+Modified: trunk/src/SpewConsole.cpp
+===================================================================
+--- trunk/src/SpewConsole.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewConsole.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -211,6 +211,7 @@
+ /////////////////  SpewConsole::cumulativeStatistics()  ///////////////////////
+ void SpewConsole::cumulativeStatistics(capacity_t jobBytesTransferred,
+                                        const TimeHack&amp; jobTransferTime,
++                                       capacity_t jobOps,
+                                        capacity_t totalBytesRead,
+                                        const TimeHack&amp; totalReadTransferTime,
+                                        capacity_t totalReadOps,
+@@ -226,7 +227,7 @@
+ 
+    if (mIterationsToDo != 1)
+    {
+-      printf(&quot;Itereration: %8d    Total runtime: %s\n&quot;,
++      printf(&quot;Iteration: %8d    Total runtime: %s\n&quot;,
+              mCurrentIteration, totalRunTime.getElapsedTimeStr().c_str());     
+    }
+    switch (mCurrentIoDirection)
+@@ -236,14 +237,14 @@
+              transferRate, 
+              getTransferRateUnitsStr(mCurrentUnits), 
+              jobTransferTime.getElapsedTimeStr().c_str(),
+-             (long double)totalReadOps/(long double)jobTransferTime.getTime());  
++             (long double)jobOps/(long double)jobTransferTime.getTime());  
+       break;
+    case WRITING:
+       printf(&quot;WTR: %11.2Lf %-5s   Transfer time: %s    IOPS: %11.2Lf\n&quot;,
+              transferRate, 
+              getTransferRateUnitsStr(mCurrentUnits), 
+              jobTransferTime.getElapsedTimeStr().c_str(),
+-             (long double)totalWriteOps/(long double)jobTransferTime.getTime());  
++             (long double)jobOps/(long double)jobTransferTime.getTime());  
+       break;
+    }
+    fflush(stdout);
+
+Modified: trunk/src/SpewConsole.h
+===================================================================
+--- trunk/src/SpewConsole.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewConsole.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -61,6 +61,7 @@
+                                        const TimeHack&amp; totalRunTime);
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack&amp; jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack&amp; totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/SpewDisplay.h
+===================================================================
+--- trunk/src/SpewDisplay.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewDisplay.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -69,6 +69,7 @@
+                                        const TimeHack&amp; totalRunTime) = 0;
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack&amp; jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack&amp; totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/SpewTui.cpp
+===================================================================
+--- trunk/src/SpewTui.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewTui.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -378,6 +378,7 @@
+ /////////////////////  SpewTui::cumulativeStatistics() ////////////////////////
+ void SpewTui::cumulativeStatistics(capacity_t jobBytesTransferred,
+                                    const TimeHack&amp; jobTransferTime,
++                                   capacity_t jobOps,
+                                    capacity_t totalBytesRead,
+                                    const TimeHack&amp; totalReadTransferTime,
+                                    capacity_t totalReadOps,
+
+Modified: trunk/src/SpewTui.h
+===================================================================
+--- trunk/src/SpewTui.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewTui.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -93,6 +93,7 @@
+                                        const TimeHack&amp; totalRunTime);
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack&amp; jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack&amp; totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/spew.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -283,7 +283,7 @@
+             PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+             PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
+             PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+-				PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
++            PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+             PATTERN_LOOKUP[DEFAULT_PATTERN]);
+    fprintf(stdout, outStr);
+ 
+@@ -714,22 +714,22 @@
+             break;
+          }
+       }
+-		if (!found) // Check for user pattern.
+-		{
+-			long int userPattern;
+-			char *endPtr;
+-			errno = 0;
+-			userPattern = strtol(patternArgStr, &amp;endPtr, 0);
+-			if (errno == 0 &amp;&amp; 
+-				 *endPtr == '\0' &amp;&amp; 
+-				 userPattern &gt;= 0 &amp;&amp; 
+-				 userPattern &lt;= 255)
+-			{
+-				found = true;
+-				gPattern = Job::PATTERN_USER_DEFINED;
+-				gUserPattern = (unsigned char)userPattern;
+-			}
+-		}
++      if (!found) // Check for user pattern.
++      {
++         long int userPattern;
++         char *endPtr;
++         errno = 0;
++         userPattern = strtol(patternArgStr, &amp;endPtr, 0);
++         if (errno == 0 &amp;&amp; 
++             *endPtr == '\0' &amp;&amp; 
++             userPattern &gt;= 0 &amp;&amp; 
++             userPattern &lt;= 255)
++         {
++            found = true;
++            gPattern = Job::PATTERN_USER_DEFINED;
++            gUserPattern = (unsigned char)userPattern;
++         }
++      }
+       if (!found)
+       {
+          error_msg(&quot;\&quot;%s\&quot; is not a valid pattern. Use none, zeros, ones, alt, numbers, random or # (where # is any number between 0-255).\n&quot;, patternArgStr);
+@@ -1040,8 +1040,11 @@
+ {
+    TimeHack now(TimeHack::getCurrentTime());
+    TimeHack jobTransferTime(job-&gt;getJobEndTime() - job-&gt;getJobStartTime());
++
++
+    gDisplay-&gt;cumulativeStatistics(job-&gt;getJobBytesTransferred(), 
+                                   jobTransferTime.getTime(),
++                                  job-&gt;getTotalNumberOfTransfers(),
+                                   gTotalBytesRead,
+                                   gTotalReadTransferTime.getTime(),
+                                   gTotalReadOps,
+@@ -1373,7 +1376,7 @@
+                                  gMaxBufferSize,
+                                  TransferInfoList::GEOMETRIC_PROGRESSION,
+                                  gPattern,
+-											gUserPattern,
++                                 gUserPattern,
+                                  gFillMethod,
+                                  gIOMethod,
+                                  gSeed,
+@@ -1412,7 +1415,7 @@
+                                 gMaxBufferSize,
+                                 TransferInfoList::GEOMETRIC_PROGRESSION,
+                                 gPattern,
+-										  gUserPattern,
++                                gUserPattern,
+                                 gFillMethod,
+                                 gIOMethod,
+                                 gSeed,
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000020.html">[Spew-changes] r75 - trunk/src
+</A></li>
+	<LI>Next message: <A HREF="000022.html">[Spew-changes] r77 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#21">[ date ]</a>
+              <a href="thread.html#21">[ thread ]</a>
+              <a href="subject.html#21">[ subject ]</a>
+              <a href="author.html#21">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

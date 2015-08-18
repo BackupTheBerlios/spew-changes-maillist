@@ -1,0 +1,702 @@
+From apers at mail.berlios.de  Fri May  9 21:20:41 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Fri, 9 May 2008 21:20:41 +0200
+Subject: [Spew-changes] r74 - trunk
+Message-ID: <200805091920.m49JKfG9032544@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-09 21:20:40 +0200 (Fri, 09 May 2008)
+New Revision: 74
+
+Modified:
+   trunk/configure.ac
+Log:
+Changed version to indicate that this is a beta release.  The funny
+version number, "1.0.6.1-really-1.0.7beta", is used to prevent sorting
+problems on Debian.
+
+
+
+Modified: trunk/configure.ac
+===================================================================
+--- trunk/configure.ac	2007-08-22 04:17:26 UTC (rev 73)
++++ trunk/configure.ac	2008-05-09 19:20:40 UTC (rev 74)
+@@ -9,7 +9,7 @@
+ 
+ SPEW_AGE=1
+ SPEW_REVISION=0
+-SPEW_CURRENT=6
++SPEW_CURRENT=6.1-really-1.0.7beta
+ AC_SUBST(SPEW_AGE)
+ AC_SUBST(SPEW_REVISION)
+ AC_SUBST(SPEW_CURRENT)
+
+
+
+From apers at mail.berlios.de  Fri May  9 21:37:53 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Fri, 9 May 2008 21:37:53 +0200
+Subject: [Spew-changes] r75 - trunk/src
+Message-ID: <200805091937.m49Jbr2b001111@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-09 21:37:52 +0200 (Fri, 09 May 2008)
+New Revision: 75
+
+Modified:
+   trunk/src/BytePatternTransfer.cpp
+   trunk/src/Log.cpp
+   trunk/src/NumbersTransfer.cpp
+   trunk/src/RandomTransfer.cpp
+   trunk/src/RandomTransferInfoList.cpp
+   trunk/src/SpewConsole.cpp
+   trunk/src/SpewTuiHelpWindow.cpp
+   trunk/src/SpewTuiProgressWindow.cpp
+   trunk/src/common.cpp
+   trunk/src/spew.cpp
+Log:
+Fix g++ 4.2 and 4.3 compile problems.
+
+
+Modified: trunk/src/BytePatternTransfer.cpp
+===================================================================
+--- trunk/src/BytePatternTransfer.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/BytePatternTransfer.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -28,6 +28,7 @@
+ 
+ #include <unistd.h>
+ #include <errno.h>
++#include <cstring>
+ 
+ #include "common.h"
+ #include "Transfer.h"
+
+Modified: trunk/src/Log.cpp
+===================================================================
+--- trunk/src/Log.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/Log.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -29,6 +29,7 @@
+ #include <stdio.h>
+ #include <stdarg.h>
+ #include <errno.h>
++#include <cstring>
+ 
+ #include "common.h"
+ #include "Log.h"
+
+Modified: trunk/src/NumbersTransfer.cpp
+===================================================================
+--- trunk/src/NumbersTransfer.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/NumbersTransfer.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -28,6 +28,7 @@
+ 
+ #include <unistd.h>
+ #include <errno.h>
++#include <cstring>
+ 
+ #include "common.h"
+ #include "Transfer.h"
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/RandomTransfer.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -28,6 +28,7 @@
+ 
+ #include <unistd.h>
+ #include <errno.h>
++#include <cstring>
+ 
+ #include "common.h"
+ #include "Transfer.h"
+
+Modified: trunk/src/RandomTransferInfoList.cpp
+===================================================================
+--- trunk/src/RandomTransferInfoList.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/RandomTransferInfoList.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -26,6 +26,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <cstring>
++
+ #include "common.h"
+ #include "Random.h"
+ #include "RandomTransferInfoList.h"
+
+Modified: trunk/src/SpewConsole.cpp
+===================================================================
+--- trunk/src/SpewConsole.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/SpewConsole.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -27,6 +27,8 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <cstring>
++
+ #include "common.h"
+ #include "SpewConsole.h"
+ 
+
+Modified: trunk/src/SpewTuiHelpWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiHelpWindow.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/SpewTuiHelpWindow.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -30,6 +30,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <cstring>
++
+ #include "common.h"
+ #include "SpewTuiWindow.h"
+ #include "SpewTuiHelpWindow.h"
+
+Modified: trunk/src/SpewTuiProgressWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiProgressWindow.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/SpewTuiProgressWindow.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -30,6 +30,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <cstring>
++
+ #include "common.h"
+ #include "SpewTui.h"
+ #include "SpewTuiProgressWindow.h"
+
+Modified: trunk/src/common.cpp
+===================================================================
+--- trunk/src/common.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/common.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -33,6 +33,7 @@
+ #include <mntent.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <cstring>
+ #ifdef HAVE_PATHS_H
+ #include <paths.h>
+ #endif
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2008-05-09 19:20:40 UTC (rev 74)
++++ trunk/src/spew.cpp	2008-05-09 19:37:52 UTC (rev 75)
+@@ -151,13 +151,13 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ////////////////////  Function Prototypes  ///////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+-void error_msg(char *fmt, ...);
+-void note(char *fmt, ...);
++void error_msg(const char *fmt, ...);
++void note(const char *fmt, ...);
+ void usage();
+ bool parse_options(int argc, const char **argv, string& cmdArgs);
+ bool validate_options();
+ void end_program(int exitCode);
+-void end_program(int exitCode, char *fmt, ...);
++void end_program(int exitCode, const char *fmt, ...);
+ void update_transfer_totals(const Job *job,
+                             IoDirection_t ioDirection);
+ void run_statistics(unsigned int iterations);
+@@ -168,7 +168,7 @@
+ //////////////////////////////////////////////////////////////////////////////
+ 
+ ////////////////////////  error_msg()  ///////////////////////////////////////
+-void error_msg(char *fmt, ...)
++void error_msg(const char *fmt, ...)
+ {
+    fprintf(stderr, "%s: ", gPrgName);
+    va_list ap;
+@@ -180,7 +180,7 @@
+ 
+ 
+ /////////////////////////  note()  ///////////////////////////////////////////
+-void note(char *fmt, ...)
++void note(const char *fmt, ...)
+ {
+    va_list ap;
+    va_start(ap, fmt);
+@@ -929,7 +929,7 @@
+ 
+ 
+ //////////////////////////  end_program()  ////////////////////////////////////
+-void end_program(int exitCode, char *fmt, ...)
++void end_program(int exitCode, const char *fmt, ...)
+ {
+    char msg[MAX_TMP_STR_LEN];
+ 
+
+
+
+From apers at mail.berlios.de  Sat May 10 00:38:25 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sat, 10 May 2008 00:38:25 +0200
+Subject: [Spew-changes] r76 - trunk/src
+Message-ID: <200805092238.m49McPZx001589@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-10 00:38:24 +0200 (Sat, 10 May 2008)
+New Revision: 76
+
+Modified:
+   trunk/src/SpewConsole.cpp
+   trunk/src/SpewConsole.h
+   trunk/src/SpewDisplay.h
+   trunk/src/SpewTui.cpp
+   trunk/src/SpewTui.h
+   trunk/src/spew.cpp
+Log:
+Fixed a problem where the IOPS calculation for a job was being based on
+cumulative transfers for every job.
+
+
+Modified: trunk/src/SpewConsole.cpp
+===================================================================
+--- trunk/src/SpewConsole.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewConsole.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -211,6 +211,7 @@
+ /////////////////  SpewConsole::cumulativeStatistics()  ///////////////////////
+ void SpewConsole::cumulativeStatistics(capacity_t jobBytesTransferred,
+                                        const TimeHack& jobTransferTime,
++                                       capacity_t jobOps,
+                                        capacity_t totalBytesRead,
+                                        const TimeHack& totalReadTransferTime,
+                                        capacity_t totalReadOps,
+@@ -226,7 +227,7 @@
+ 
+    if (mIterationsToDo != 1)
+    {
+-      printf("Itereration: %8d    Total runtime: %s\n",
++      printf("Iteration: %8d    Total runtime: %s\n",
+              mCurrentIteration, totalRunTime.getElapsedTimeStr().c_str());     
+    }
+    switch (mCurrentIoDirection)
+@@ -236,14 +237,14 @@
+              transferRate, 
+              getTransferRateUnitsStr(mCurrentUnits), 
+              jobTransferTime.getElapsedTimeStr().c_str(),
+-             (long double)totalReadOps/(long double)jobTransferTime.getTime());  
++             (long double)jobOps/(long double)jobTransferTime.getTime());  
+       break;
+    case WRITING:
+       printf("WTR: %11.2Lf %-5s   Transfer time: %s    IOPS: %11.2Lf\n",
+              transferRate, 
+              getTransferRateUnitsStr(mCurrentUnits), 
+              jobTransferTime.getElapsedTimeStr().c_str(),
+-             (long double)totalWriteOps/(long double)jobTransferTime.getTime());  
++             (long double)jobOps/(long double)jobTransferTime.getTime());  
+       break;
+    }
+    fflush(stdout);
+
+Modified: trunk/src/SpewConsole.h
+===================================================================
+--- trunk/src/SpewConsole.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewConsole.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -61,6 +61,7 @@
+                                        const TimeHack& totalRunTime);
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack& jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack& totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/SpewDisplay.h
+===================================================================
+--- trunk/src/SpewDisplay.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewDisplay.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -69,6 +69,7 @@
+                                        const TimeHack& totalRunTime) = 0;
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack& jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack& totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/SpewTui.cpp
+===================================================================
+--- trunk/src/SpewTui.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewTui.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -378,6 +378,7 @@
+ /////////////////////  SpewTui::cumulativeStatistics() ////////////////////////
+ void SpewTui::cumulativeStatistics(capacity_t jobBytesTransferred,
+                                    const TimeHack& jobTransferTime,
++                                   capacity_t jobOps,
+                                    capacity_t totalBytesRead,
+                                    const TimeHack& totalReadTransferTime,
+                                    capacity_t totalReadOps,
+
+Modified: trunk/src/SpewTui.h
+===================================================================
+--- trunk/src/SpewTui.h	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/SpewTui.h	2008-05-09 22:38:24 UTC (rev 76)
+@@ -93,6 +93,7 @@
+                                        const TimeHack& totalRunTime);
+    virtual void cumulativeStatistics(capacity_t jobBytesTransferred,
+                                      const TimeHack& jobTransferTime,
++                                     capacity_t jobOps,
+                                      capacity_t totalBytesRead,
+                                      const TimeHack& totalReadTransferTime,
+                                      capacity_t totalReadOps,
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2008-05-09 19:37:52 UTC (rev 75)
++++ trunk/src/spew.cpp	2008-05-09 22:38:24 UTC (rev 76)
+@@ -283,7 +283,7 @@
+             PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+             PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
+             PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+-				PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
++            PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+             PATTERN_LOOKUP[DEFAULT_PATTERN]);
+    fprintf(stdout, outStr);
+ 
+@@ -714,22 +714,22 @@
+             break;
+          }
+       }
+-		if (!found) // Check for user pattern.
+-		{
+-			long int userPattern;
+-			char *endPtr;
+-			errno = 0;
+-			userPattern = strtol(patternArgStr, &endPtr, 0);
+-			if (errno == 0 && 
+-				 *endPtr == '\0' && 
+-				 userPattern >= 0 && 
+-				 userPattern <= 255)
+-			{
+-				found = true;
+-				gPattern = Job::PATTERN_USER_DEFINED;
+-				gUserPattern = (unsigned char)userPattern;
+-			}
+-		}
++      if (!found) // Check for user pattern.
++      {
++         long int userPattern;
++         char *endPtr;
++         errno = 0;
++         userPattern = strtol(patternArgStr, &endPtr, 0);
++         if (errno == 0 && 
++             *endPtr == '\0' && 
++             userPattern >= 0 && 
++             userPattern <= 255)
++         {
++            found = true;
++            gPattern = Job::PATTERN_USER_DEFINED;
++            gUserPattern = (unsigned char)userPattern;
++         }
++      }
+       if (!found)
+       {
+          error_msg("\"%s\" is not a valid pattern. Use none, zeros, ones, alt, numbers, random or # (where # is any number between 0-255).\n", patternArgStr);
+@@ -1040,8 +1040,11 @@
+ {
+    TimeHack now(TimeHack::getCurrentTime());
+    TimeHack jobTransferTime(job->getJobEndTime() - job->getJobStartTime());
++
++
+    gDisplay->cumulativeStatistics(job->getJobBytesTransferred(), 
+                                   jobTransferTime.getTime(),
++                                  job->getTotalNumberOfTransfers(),
+                                   gTotalBytesRead,
+                                   gTotalReadTransferTime.getTime(),
+                                   gTotalReadOps,
+@@ -1373,7 +1376,7 @@
+                                  gMaxBufferSize,
+                                  TransferInfoList::GEOMETRIC_PROGRESSION,
+                                  gPattern,
+-											gUserPattern,
++                                 gUserPattern,
+                                  gFillMethod,
+                                  gIOMethod,
+                                  gSeed,
+@@ -1412,7 +1415,7 @@
+                                 gMaxBufferSize,
+                                 TransferInfoList::GEOMETRIC_PROGRESSION,
+                                 gPattern,
+-										  gUserPattern,
++                                gUserPattern,
+                                 gFillMethod,
+                                 gIOMethod,
+                                 gSeed,
+
+
+
+From apers at mail.berlios.de  Sat May 10 01:45:00 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sat, 10 May 2008 01:45:00 +0200
+Subject: [Spew-changes] r77 - trunk/src
+Message-ID: <200805092345.m49Nj02s019607@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-10 01:44:59 +0200 (Sat, 10 May 2008)
+New Revision: 77
+
+Modified:
+   trunk/src/WriteJob.cpp
+Log:
+Don't truncate file on write if -o|--offset is used and != 0.
+
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2008-05-09 22:38:24 UTC (rev 76)
++++ trunk/src/WriteJob.cpp	2008-05-09 23:44:59 UTC (rev 77)
+@@ -76,10 +76,12 @@
+    int flags;
+ 
+ #ifdef O_LARGEFILE
+-   flags = O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE;
++   flags = O_WRONLY|O_CREAT|O_LARGEFILE;
+ #else
+-   flags = O_WRONLY|O_CREAT|O_TRUNC;
++   flags = O_WRONLY|O_CREAT;
+ #endif
++	if (mOffset == 0)
++		flags |= O_TRUNC;
+    switch (mIOMethod)
+    {
+    case ASYNCH_IO:
+
+
+
+From apers at mail.berlios.de  Tue May 13 00:42:25 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Tue, 13 May 2008 00:42:25 +0200
+Subject: [Spew-changes] r78 - in trunk: . man
+Message-ID: <200805122242.m4CMgPAe028782@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-13 00:42:24 +0200 (Tue, 13 May 2008)
+New Revision: 78
+
+Modified:
+   trunk/configure.ac
+   trunk/man/spew.1.in
+Log:
+Changed version to 1.0.7.
+
+
+Modified: trunk/configure.ac
+===================================================================
+--- trunk/configure.ac	2008-05-09 23:44:59 UTC (rev 77)
++++ trunk/configure.ac	2008-05-12 22:42:24 UTC (rev 78)
+@@ -9,7 +9,7 @@
+ 
+ SPEW_AGE=1
+ SPEW_REVISION=0
+-SPEW_CURRENT=6.1-really-1.0.7beta
++SPEW_CURRENT=7
+ AC_SUBST(SPEW_AGE)
+ AC_SUBST(SPEW_REVISION)
+ AC_SUBST(SPEW_CURRENT)
+
+Modified: trunk/man/spew.1.in
+===================================================================
+--- trunk/man/spew.1.in	2008-05-09 23:44:59 UTC (rev 77)
++++ trunk/man/spew.1.in	2008-05-12 22:42:24 UTC (rev 78)
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.36.
+-.TH SPEW "1" "August 2007" "spew 1.0.6" "User Commands"
++.TH SPEW "1" "May 2008" "spew 1.0.7" "User Commands"
+ .SH NAME
+ spew \- measures I/O performance and/or generates I/O load
+ .SH SYNOPSIS
+
+
+
+From apers at mail.berlios.de  Tue May 13 00:44:38 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Tue, 13 May 2008 00:44:38 +0200
+Subject: [Spew-changes] r79 - trunk
+Message-ID: <200805122244.m4CMicSn000944@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-13 00:44:37 +0200 (Tue, 13 May 2008)
+New Revision: 79
+
+Modified:
+   trunk/builder.sh
+Log:
+Changed builder.sh script to use gcc on HP-UX. 
+Removed hpux11-parisc build option.
+
+
+Modified: trunk/builder.sh
+===================================================================
+--- trunk/builder.sh	2008-05-12 22:42:24 UTC (rev 78)
++++ trunk/builder.sh	2008-05-12 22:44:37 UTC (rev 79)
+@@ -46,25 +46,19 @@
+       TAR_FLAGS=-r 
+       TAR_EXT=zip
+       ;;
+-    hpux11-parisc64)
+-      MAKE=gmake
+-      TAR=/usr/local/bin/tar
+-      ldflags="-L/home/andrew/popt-1.7/.libs -lpthread" 
+-      cxxflags="-I/home/andrew/popt-1.7 -I/usr/local/include/ncurses"
+-      ;;
+      hpux11-ia64)
+-     cxx=aCC
+-     cc=aCC
++     cxx=g++
++     cc=gcc
+      MAKE=gmake
+      TAR=/usr/bin/tar
+      COMPRESS=/usr/local/bin/gzip
+      COMPRESS_FLAGS=-c
+-     ldflags="-mt -Wl,-a,archive_shared -L /usr/local/lib/hpux32"
+-     libs="-lgettextlib -lpopt -lintl -liconv"
+-     cxxflags="-AA -I/usr/local/include -I/usr/local/include/ncurses -mt"
++     ldflags="-L /usr/local/lib/hpux32"
++     libs="-lncurses -lpopt -lintl -liconv"
++     cxxflags="-I/usr/local/include -I/usr/local/include/ncurses"
+      ;;
+     *)
+-      echo "error: unknown architecture -- use one of linux-ia32, linux-ia64, linux-parisc64, cygwinxp-ia32, hpux11-parisc64, or hpux11-ia64" >&2
++      echo "error: unknown architecture -- use one of linux-ia32, linux-ia64, linux-parisc64, cygwinxp-ia32, or hpux11-ia64" >&2
+       exit 1
+       ;;
+ esac
+
+
+
+From apers at mail.berlios.de  Tue May 13 06:35:04 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Tue, 13 May 2008 06:35:04 +0200
+Subject: [Spew-changes] r80 - trunk
+Message-ID: <200805130435.m4D4Z4s5031298@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-13 06:35:01 +0200 (Tue, 13 May 2008)
+New Revision: 80
+
+Modified:
+   trunk/NEWS
+Log:
+Add changes for 1.0.7.
+
+
+Modified: trunk/NEWS
+===================================================================
+--- trunk/NEWS	2008-05-12 22:44:37 UTC (rev 79)
++++ trunk/NEWS	2008-05-13 04:35:01 UTC (rev 80)
+@@ -1,3 +1,12 @@
++Changes since 1.0.6
++
++* Fixed a bug where the IOPS counter was not being reset between iterations 
++  resulting in IOPS increasing after every interation.
++
++* Fixed gcc 4.2 and 4.3 compile problems
++
++* Spew no longer truncates the file when using the -o|--offset option.
++
+ Changes since 1.0.5
+ 
+ * Ported to IA-64 HP-UX.
+
+
+
+From apers at mail.berlios.de  Tue May 13 06:49:54 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Tue, 13 May 2008 06:49:54 +0200
+Subject: [Spew-changes] r81 - tags
+Message-ID: <200805130449.m4D4ns8S015967@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-13 06:49:52 +0200 (Tue, 13 May 2008)
+New Revision: 81
+
+Added:
+   tags/1.0.7/
+Log:
+Tagging the 1.0.7 release of the spew project.
+
+
+Copied: tags/1.0.7 (from rev 80, trunk)
+
+
+
+From apers at mail.berlios.de  Tue May 13 06:58:25 2008
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Tue, 13 May 2008 06:58:25 +0200
+Subject: [Spew-changes] r82 - web
+Message-ID: <200805130458.m4D4wPjI025841@sheep.berlios.de>
+
+Author: apers
+Date: 2008-05-13 06:58:24 +0200 (Tue, 13 May 2008)
+New Revision: 82
+
+Modified:
+   web/index.html
+Log:
+Updated web-pages for 1.0.7 release.
+
+
+Modified: web/index.html
+===================================================================
+--- web/index.html	2008-05-13 04:49:52 UTC (rev 81)
++++ web/index.html	2008-05-13 04:58:24 UTC (rev 82)
+@@ -143,6 +143,13 @@
+             <tbody>
+ 
+               <tr>
++                <td style="vertical-align: top;">12-May-08</td>
++                <td style="vertical-align: top;">Spew 1.0.7 released.<br>
++		Minor bug fixes.<br>
++		</td>
++              </tr>
++
++              <tr>
+                 <td style="vertical-align: top;">21-Aug-07</td>
+                 <td style="vertical-align: top;">Spew 1.0.6 released.<br>
+ 		Minor bug fixes.<br>
+@@ -213,6 +220,15 @@
+             <tbody>
+               <tr>
+                 <td style="vertical-align: top;"><a href=
++                "ftp://ftp.berlios.de/pub/spew/1.0.7/index.html">spew-1.0.7</a><br>
++                </td>
++
++                <td style="vertical-align: top;">Minor bug fixes.<br>
++                <td style="vertical-align: top;">stable<br></td>
++              </tr>
++
++              <tr>
++                <td style="vertical-align: top;"><a href=
+                 "ftp://ftp.berlios.de/pub/spew/1.0.6/index.html">spew-1.0.6</a><br>
+                 </td>
+ 
+@@ -307,7 +323,7 @@
+               </tr>
+               <tr>
+                 <td style="vertical-align: top;"><a href=
+-                "http://svn.berlios.de/viewcvs/spew/tags/1.0.6/">1.0.6</a><br>
++                "http://svn.berlios.de/viewcvs/spew/tags/1.0.7/">1.0.7</a><br>
+                 </td>
+                 </td>
+ 		  <td style="vertical-align: top;">Latest release</a><br>
+@@ -315,6 +331,14 @@
+               </tr>
+               <tr>
+                 <td style="vertical-align: top;"><a href=
++                "http://svn.berlios.de/viewcvs/spew/tags/1.0.6/">1.0.6</a><br>
++                </td>
++                </td>
++		  <td style="vertical-align: top;">Obsolete</a><br>
++                </td>
++              </tr>
++              <tr>
++                <td style="vertical-align: top;"><a href=
+                 "http://svn.berlios.de/viewcvs/spew/tags/1.0.5/">1.0.5</a><br>
+                 </td>
+                 </td>
+
+
+

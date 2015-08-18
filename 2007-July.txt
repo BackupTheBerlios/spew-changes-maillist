@@ -1,0 +1,709 @@
+From apers at mail.berlios.de  Fri Jul 20 23:59:50 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Fri, 20 Jul 2007 23:59:50 +0200
+Subject: [Spew-changes] r63 - trunk/src
+Message-ID: <200707202159.l6KLxojw021286@sheep.berlios.de>
+
+Author: apers
+Date: 2007-07-20 23:59:49 +0200 (Fri, 20 Jul 2007)
+New Revision: 63
+
+Added:
+   trunk/src/BytePatternTransfer.cpp
+   trunk/src/BytePatternTransfer.h
+Modified:
+   trunk/src/Job.cpp
+   trunk/src/Job.h
+   trunk/src/Makefile.am
+   trunk/src/RandomTransfer.cpp
+   trunk/src/RandomTransfer.h
+   trunk/src/ReadJob.cpp
+   trunk/src/ReadJob.h
+   trunk/src/TransferFactory.cpp
+   trunk/src/TransferFactory.h
+   trunk/src/TransferInfoListFactory.cpp
+   trunk/src/TransferInfoListFactory.h
+   trunk/src/WriteJob.cpp
+   trunk/src/WriteJob.h
+   trunk/src/spew.cpp
+   trunk/src/spewer.cpp
+Log:
+Added Joe Eiler's patch that adds new patterns: ones, zeros, alt, and
+user defined.  These patterns are all variotions off the zeros
+pattern, but instead 0's, 1's, 0xaa's, or any number between 0 and 255
+are used in the buffer.
+
+
+Added: trunk/src/BytePatternTransfer.cpp
+===================================================================
+--- trunk/src/BytePatternTransfer.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/BytePatternTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -0,0 +1,173 @@
++//////////////////////////  -*-C++-*- /////////////////////////////////////////
++//
++// BytePatternTransfer.cpp
++//
++// Spew
++//
++// Copyright (C) 2004 Hewlett-Packard Corp.
++//
++//
++// This program is free software; you can redistribute it and/or modify it
++// under the terms of the GNU General Public License as published by the
++// Free Software Foundation version 2 of the License.
++// 
++// This program is distributed in the hope that it will be useful, but
++// WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++// General Public License for more details.
++// 
++// You should have received a copy of the GNU General Public License along
++// with this program; if not, write to the Free Software Foundation, Inc.,
++// 675 Mass Ave, Cambridge, MA 02139, USA.
++
++using namespace std;
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <unistd.h>
++#include <errno.h>
++
++#include "common.h"
++#include "Transfer.h"
++#include "BytePatternTransfer.h"
++
++//////////////  BytePatternTransfer::BytePatternTransfer()  ///////////////////
++BytePatternTransfer::BytePatternTransfer(int fd, 
++													  unsigned char *buffer, 
++													  capacity_t bufferSize,
++													  pid_t pid,
++													  unsigned char pattern) :
++   mPattern(pattern),
++   Transfer(fd, buffer, bufferSize, pid)
++{
++   // Set mBuffer to specified pattern.  This buffer will not change during
++   // writes. 
++   memset(mBuffer, (int)pattern, mMaxBufferSize);
++}
++
++
++////////////////////  BytePatternTransfer::read()  ////////////////////////////
++int BytePatternTransfer::read(const TransferInfo &transInfo, string &errorMsg)
++{  
++   int ret;
++   ret = this->seek(transInfo, errorMsg);
++   if (ret != EXIT_OK)
++      return ret;
++
++   capacity_t bufferSize = transInfo.getSize();
++   capacity_t transferNumber = transInfo.getSequenceNumber();
++   capacity_t fileOffset = transInfo.getOffset();
++
++   ssize_t count = ::read(mFd, mBuffer, bufferSize); 
++   if (count < 0)
++   {
++      errorMsg = strError(errno);
++      return EXIT_ERROR_IO;
++   }
++
++   mCurrentOffset += count;
++   if ((capacity_t)count != bufferSize)
++   {
++      errorMsg = strPrintf("Read only %llu bytes of %llu during transfer %llu at offset %llu.", (capacity_t)count, bufferSize, transferNumber, fileOffset); 
++      return EXIT_ERROR_UNDERRUN;
++   }
++
++   // Check contents of buffer.
++   string errors;
++   string recieved;
++   string expected;
++   capacity_t errorsFound = 0LLU;
++   bool inErrorRange = false;
++   capacity_t startingErrorRange = fileOffset;
++   capacity_t endingErrorRange = fileOffset;
++   for (capacity_t i = 0; i < bufferSize; i++)
++   {
++      if (*(mBuffer + i) == mPattern)
++      {
++         if (inErrorRange)
++         {
++            endingErrorRange = fileOffset + i - 1;
++            if (startingErrorRange == endingErrorRange)
++               errors += strPrintf("\t%lld\n", startingErrorRange);
++            else
++               errors += strPrintf("\t%lld - %lld\n", 
++                                   startingErrorRange, 
++                                   endingErrorRange);
++
++            errors += strPrintf("expected: ");
++            errors += expected;
++            errors += strPrintf("\n");
++            errors += strPrintf("recieved: ");
++            errors += recieved;
++            errors += strPrintf("\n");
++
++            inErrorRange = false;
++            recieved = strPrintf("");
++            expected = strPrintf("");
++         }
++      }
++      else
++      {
++         errorsFound++;
++         recieved += strPrintf("%02x", *(mBuffer+i));
++         expected += strPrintf("%02x", mPattern);
++         if (!inErrorRange)
++         {
++            startingErrorRange = fileOffset + i;
++            inErrorRange = true;
++         }
++      }
++   }
++
++   // Report last error range (if it exists).
++   if (inErrorRange)
++   {
++      endingErrorRange = bufferSize;
++      if (startingErrorRange == endingErrorRange)
++         errors += strPrintf("\t%lld\n", startingErrorRange);
++      else
++         errors += strPrintf("\t%lld - %lld\n", 
++                             startingErrorRange, 
++                             endingErrorRange);
++   }
++   if (errorsFound > 0)
++   {
++      errorMsg = strPrintf("Data integrity errors for a total of %lld byte(s) found during\ntransfer %llu at offset(s):\n", errorsFound, transferNumber);
++      errorMsg += errors;
++      return EXIT_ERROR_DATA_INTEGRITY;
++   }
++
++   return EXIT_OK;
++}
++
++
++//////////////////////////  BytePatternTransfer::write()  ///////////////////////////
++int BytePatternTransfer::write(const TransferInfo &transInfo, string &errorMsg)
++{  
++   int ret;
++   ret = this->seek(transInfo, errorMsg);
++   if (ret != EXIT_OK)
++      return ret;
++
++   capacity_t bufferSize = transInfo.getSize();
++   capacity_t transferNumber = transInfo.getSequenceNumber();
++   capacity_t fileOffset = transInfo.getOffset();
++
++   ssize_t count = ::write(mFd, mBuffer, bufferSize); 
++   if (count < 0)
++   {
++      errorMsg = strError(errno);
++      return EXIT_ERROR_IO;
++   }
++
++   mCurrentOffset += count;
++   if ((capacity_t)count != bufferSize)
++   {
++      errorMsg = strPrintf("Wrote only %llu bytes of %llu during transfer %llu at offset %llu.", (capacity_t)count, bufferSize, transferNumber, fileOffset); 
++      return EXIT_ERROR_UNDERRUN;
++   }
++
++   return EXIT_OK;
++}
+
+Added: trunk/src/BytePatternTransfer.h
+===================================================================
+--- trunk/src/BytePatternTransfer.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/BytePatternTransfer.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -0,0 +1,58 @@
++//////////////////////////  -*-C++-*- /////////////////////////////////////////
++//
++// BytePatternTransfer.h
++//
++// Spew
++//
++// Copyright (C) 2004 Hewlett-Packard Corp.
++//
++//
++// This program is free software; you can redistribute it and/or modify it
++// under the terms of the GNU General Public License as published by the
++// Free Software Foundation version 2 of the License.
++// 
++// This program is distributed in the hope that it will be useful, but
++// WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++// General Public License for more details.
++// 
++// You should have received a copy of the GNU General Public License along
++// with this program; if not, write to the Free Software Foundation, Inc.,
++// 675 Mass Ave, Cambridge, MA 02139, USA.
++
++#ifndef BYTEPATTERNTRANSFER_H
++#define BYTEPATTERNTRANSFER_H
++
++#include <string>
++
++#include "common.h"
++#include "Job.h"
++#include "Log.h"
++#include "Transfer.h"
++#include "TransferInfo.h"
++
++
++class BytePatternTransfer: public Transfer
++{
++public:
++   BytePatternTransfer(int fd, 
++							  unsigned char *buffer, 
++							  capacity_t bufferSize,
++							  pid_t pid,
++							  unsigned char pattern);
++             
++   virtual int read(const TransferInfo &transInfo, string &errorMsg);
++   virtual int write(const TransferInfo &transInfo, string &errorMsg);
++
++   virtual ~BytePatternTransfer() {};
++
++private:
++   BytePatternTransfer();                     // Hide default constructor.
++   BytePatternTransfer(const BytePatternTransfer&); // Hide copy constructor.
++
++protected:
++   int mPattern;
++
++};
++
++#endif  // BYTEPATTERNTRANSFER_H
+
+Modified: trunk/src/Job.cpp
+===================================================================
+--- trunk/src/Job.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/Job.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -35,7 +35,7 @@
+ #include "GarbageTransfer.h"
+ #include "NumbersTransfer.h"
+ #include "RandomTransfer.h"
+-#include "ZerosTransfer.h"
++#include "BytePatternTransfer.h"
+ #include "TransferInfo.h"
+ #include "TransferInfoList.h"
+ #include "TransferInfoListFactory.h"
+@@ -50,6 +50,7 @@
+          capacity_t maxBufferSize,
+          TransferInfoList::buffer_size_method_t bufferSizeMethod,
+          pattern_t pattern,
++			unsigned char userPattern,
+          TransferInfoList::fill_method_t fillMethod,
+          io_method_t ioMethod,
+          u32_t seed,
+@@ -63,6 +64,7 @@
+    mMaxBufferSize(maxBufferSize),
+    mBufferSizeMethod(bufferSizeMethod),
+    mPattern(pattern),
++	mUserPattern(userPattern),
+    mFillMethod(fillMethod),
+    mIOMethod(ioMethod),
+    mSeed(seed),
+
+Modified: trunk/src/Job.h
+===================================================================
+--- trunk/src/Job.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/Job.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -38,8 +38,12 @@
+ public:
+    typedef enum {PATTERN_NONE,
+                  PATTERN_ZEROS, 
++                 PATTERN_ONES, 
++                 PATTERN_ALTERNATING, 
+                  PATTERN_TRANSFER_NUMBERS, 
+-                 PATTERN_RANDOM} pattern_t;
++                 PATTERN_RANDOM,
++                 PATTERN_USER_DEFINED} pattern_t;
++
+    typedef enum {ASYNCH_IO,
+                  SYNCH_IO,
+                  DIRECT_IO} io_method_t;
+@@ -53,6 +57,7 @@
+        capacity_t maxBufferSize,
+        TransferInfoList::buffer_size_method_t bufferSizeMethod,
+        pattern_t pattern,
++		 unsigned char userPattern,
+        TransferInfoList::fill_method_t fillMethod,
+        io_method_t ioMethod,
+        u32_t seed,
+@@ -121,6 +126,7 @@
+    capacity_t mMaxBufferSize;
+    TransferInfoList::buffer_size_method_t mBufferSizeMethod;
+    pattern_t mPattern;
++	unsigned char mUserPattern;
+    TransferInfoList::fill_method_t mFillMethod;     // Random or sequential.
+    io_method_t mIOMethod;         // Synchronous or asynchronous.
+ 
+
+Modified: trunk/src/Makefile.am
+===================================================================
+--- trunk/src/Makefile.am	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/Makefile.am	2007-07-20 21:59:49 UTC (rev 63)
+@@ -14,7 +14,7 @@
+         GarbageTransfer.cpp GarbageTransfer.h \
+         NumbersTransfer.cpp NumbersTransfer.h \
+         RandomTransfer.cpp RandomTransfer.h \
+-        ZerosTransfer.cpp ZerosTransfer.h \
++        BytePatternTransfer.cpp BytePatternTransfer.h \
+ 	TransferInfo.cpp TransferInfo.h \
+ 	TransferInfoList.cpp TransferInfoList.h \
+ 	TransferInfoListFactory.cpp TransferInfoListFactory.h \
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/RandomTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -38,7 +38,7 @@
+                                unsigned char *buffer, 
+                                capacity_t bufferSize,
+                                capacity_t id,
+-                               u32_t seed) : 
++                               u64_t seed) : 
+    Transfer(fd, buffer, bufferSize, id)
+ {
+    mRnd.setSeed(seed);
+
+Modified: trunk/src/RandomTransfer.h
+===================================================================
+--- trunk/src/RandomTransfer.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/RandomTransfer.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -38,7 +38,7 @@
+                   unsigned char *buffer, 
+                   capacity_t bufferSize,
+                   capacity_t id,
+-                  u32_t seed);
++                  u64_t seed);
+              
+    virtual int read(const TransferInfo &tranInfo, string &errorMsg);
+    virtual int write(const TransferInfo &tranInfo, string &errorMsg);
+
+Modified: trunk/src/ReadJob.cpp
+===================================================================
+--- trunk/src/ReadJob.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/ReadJob.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -47,6 +47,7 @@
+                  capacity_t maxBufferSize,
+                  TransferInfoList::buffer_size_method_t bufferSizeMethod,
+                  pattern_t pattern,
++					  unsigned char userPattern,
+                  TransferInfoList::fill_method_t fillMethod,
+                  io_method_t ioMethod,
+                  u32_t seed,
+@@ -59,6 +60,7 @@
+          maxBufferSize,
+          bufferSizeMethod,
+          pattern,
++			userPattern,
+          fillMethod,
+          ioMethod,
+          seed,
+@@ -99,6 +101,7 @@
+    }
+ 
+    mTransfer = TransferFactory::createInstance(mPattern,
++															  mUserPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+
+Modified: trunk/src/ReadJob.h
+===================================================================
+--- trunk/src/ReadJob.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/ReadJob.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -36,6 +36,7 @@
+            capacity_t maxBufferSize,
+            TransferInfoList::buffer_size_method_t bufferSizeMethod,
+            pattern_t pattern,
++			  unsigned char userPattern,
+            TransferInfoList::fill_method_t fillMethod,
+            io_method_t ioMethod,
+            u32_t seed,
+
+Modified: trunk/src/TransferFactory.cpp
+===================================================================
+--- trunk/src/TransferFactory.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/TransferFactory.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -32,10 +32,11 @@
+ #include "GarbageTransfer.h"
+ #include "NumbersTransfer.h"
+ #include "RandomTransfer.h"
+-#include "ZerosTransfer.h"
++#include "BytePatternTransfer.h"
+ 
+ ///////////////////  TransferFactory::createInstance()  ///////////////////////
+ Transfer *TransferFactory::createInstance(Job::pattern_t pattern,
++														unsigned char userPattern,
+                                           int fd, 
+                                           unsigned char *buffer, 
+                                           capacity_t maxBufferSize,
+@@ -52,11 +53,26 @@
+                                         id);
+       break;
+    case Job::PATTERN_ZEROS:
+-      transferPtr = new ZerosTransfer(fd, 
+-                                      buffer, 
+-                                      maxBufferSize, 
+-                                      id);
++      transferPtr = new BytePatternTransfer(fd, 
++														  buffer, 
++														  maxBufferSize, 
++														  id,
++			                                   0x00);
+       break;
++   case Job::PATTERN_ONES:
++      transferPtr = new BytePatternTransfer(fd, 
++														  buffer, 
++														  maxBufferSize, 
++														  id,
++			                                   0xff);
++		break;
++	case Job::PATTERN_ALTERNATING:
++		transferPtr = new BytePatternTransfer(fd, 
++                                            buffer, 
++                                            maxBufferSize, 
++                                            id,
++                                            0xaa);
++      break;
+    case Job::PATTERN_TRANSFER_NUMBERS:
+       transferPtr = new NumbersTransfer(fd, 
+                                         buffer, 
+@@ -70,6 +86,13 @@
+                                        id, 
+                                        seed);
+       break;
++   case Job::PATTERN_USER_DEFINED:
++      transferPtr = new BytePatternTransfer(fd, 
++                                            buffer, 
++                                            maxBufferSize, 
++                                            id,
++                                            userPattern);
++      break;
+    default:
+       transferPtr = 0;
+       break;
+
+Modified: trunk/src/TransferFactory.h
+===================================================================
+--- trunk/src/TransferFactory.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/TransferFactory.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -35,6 +35,7 @@
+ 
+ public:
+    static Transfer *createInstance(Job::pattern_t pattern,
++											  unsigned char userPattern,
+                                    int fd, 
+                                    unsigned char *buffer, 
+                                    capacity_t maxBufferSize,
+
+Modified: trunk/src/TransferInfoListFactory.cpp
+===================================================================
+--- trunk/src/TransferInfoListFactory.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/TransferInfoListFactory.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -41,7 +41,7 @@
+       TransferInfoList::fill_method_t fillMethod,
+       capacity_t offset,
+       capacity_t transferSize,
+-      u64_t seed)
++      u32_t seed)
+ {
+    if (fillMethod == TransferInfoList::RANDOM_FILL ||
+        minBufferSize != maxBufferSize)
+
+Modified: trunk/src/TransferInfoListFactory.h
+===================================================================
+--- trunk/src/TransferInfoListFactory.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/TransferInfoListFactory.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -37,7 +37,7 @@
+       TransferInfoList::fill_method_t fillMethod,
+       capacity_t offset,
+       capacity_t transferSize,
+-      u64_t seed);
++      u32_t seed);
+ 
+ private:
+    // Hide default methods.
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/WriteJob.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -47,6 +47,7 @@
+                    capacity_t maxBufferSize,
+                    TransferInfoList::buffer_size_method_t bufferSizeMethod,
+                    pattern_t pattern,
++						 unsigned char userPattern,
+                    TransferInfoList::fill_method_t fillMethod,
+                    io_method_t ioMethod,
+                    u32_t seed,
+@@ -59,6 +60,7 @@
+          maxBufferSize,
+          bufferSizeMethod,
+          pattern,
++			userPattern,
+          fillMethod,
+          ioMethod,
+          seed,
+@@ -99,6 +101,7 @@
+    }
+ 
+    mTransfer = TransferFactory::createInstance(mPattern,
++															  mUserPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+
+Modified: trunk/src/WriteJob.h
+===================================================================
+--- trunk/src/WriteJob.h	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/WriteJob.h	2007-07-20 21:59:49 UTC (rev 63)
+@@ -36,6 +36,7 @@
+             capacity_t maxBufferSize,
+             TransferInfoList::buffer_size_method_t bufferSizeMethod,
+             pattern_t pattern,
++				unsigned char userPattern,
+             TransferInfoList::fill_method_t fillMethod,
+             io_method_t ioMethod,
+             u32_t seed,
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/spew.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -102,8 +102,11 @@
+ {
+    "none",
+    "zeros",
++   "ones",
++   "alt",
+    "numbers",
+    "random",
++   "#",
+    (char *)NULL,
+ };
+ 
+@@ -126,6 +129,7 @@
+ capacity_t gMaxBufferSize = DEFAULT_MAX_BUFFER_SIZE;
+ capacity_t gOffset = 0;
+ Job::pattern_t gPattern = DEFAULT_PATTERN;
++unsigned char gUserPattern = 0;
+ capacity_t gTransferSize = 0;
+ string gFile = "";
+ bool gUseTui = false;
+@@ -244,9 +248,10 @@
+ "                                    gibibytes(g), gigabytes(G).\n"
+ "                                    tebibytes(t), or terabytes(T).\n"
+ "  PATTERN                           Data pattern used when writing/reading\n"
+-"                                    data. Available patterns are: none, \n"
+-"                                    zeros, random, and numbers. The default\n"
+-"                                    pattern is %s.\n"
++"                                    data. Available patterns are: %s, \n"
++"                                    %s, %s, %s, %s, %s, and \"%s\"\n"
++"                                    (where \"%s\" is a number between 0-255). The\n"
++"                                    default pattern is \"%s\".\n"
+ "  RCFILE                            Read additional command-line options\n"
+ "                                    from RCFILE.  Other options on the\n"
+ "                                    command-line will override options in\n"
+@@ -273,8 +278,12 @@
+             Transfer::OFFSET_INCREMENT,
+             PATTERN_LOOKUP[Job::PATTERN_NONE],
+             PATTERN_LOOKUP[Job::PATTERN_ZEROS],
++            PATTERN_LOOKUP[Job::PATTERN_ONES],
++            PATTERN_LOOKUP[Job::PATTERN_ALTERNATING],
+             PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+             PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
++            PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
++				PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+             PATTERN_LOOKUP[DEFAULT_PATTERN]);
+    fprintf(stdout, outStr);
+ 
+@@ -705,9 +714,25 @@
+             break;
+          }
+       }
++		if (!found) // Check for user pattern.
++		{
++			long int userPattern;
++			char *endPtr;
++			errno = 0;
++			userPattern = strtol(patternArgStr, &endPtr, 0);
++			if (errno == 0 && 
++				 *endPtr == '\0' && 
++				 userPattern >= 0 && 
++				 userPattern <= 255)
++			{
++				found = true;
++				gPattern = Job::PATTERN_USER_DEFINED;
++				gUserPattern = (unsigned char)userPattern;
++			}
++		}
+       if (!found)
+       {
+-         error_msg("\"%s\" is not a valid pattern. Use none, zeros, numbers, or random.\n", patternArgStr);
++         error_msg("\"%s\" is not a valid pattern. Use none, zeros, ones, alt, numbers, random or # (where # is any number between 0-255).\n", patternArgStr);
+          usage(context);
+          poptFreeContext(context);
+          return false;
+@@ -1348,6 +1373,7 @@
+                                  gMaxBufferSize,
+                                  TransferInfoList::GEOMETRIC_PROGRESSION,
+                                  gPattern,
++											gUserPattern,
+                                  gFillMethod,
+                                  gIOMethod,
+                                  gSeed,
+@@ -1386,6 +1412,7 @@
+                                 gMaxBufferSize,
+                                 TransferInfoList::GEOMETRIC_PROGRESSION,
+                                 gPattern,
++										  gUserPattern,
+                                 gFillMethod,
+                                 gIOMethod,
+                                 gSeed,
+
+Modified: trunk/src/spewer.cpp
+===================================================================
+--- trunk/src/spewer.cpp	2007-01-22 00:43:15 UTC (rev 62)
++++ trunk/src/spewer.cpp	2007-07-20 21:59:49 UTC (rev 63)
+@@ -157,12 +157,18 @@
+ "   PATTERN                         Data pattern used when writing data.\n"
+ "                                   Available patterns are:\n"
+ "                                      %s - Fill buffer with 0's.\n"
++"                                      %s - Fill buffer with 1's.\n"
++"                                      %s - Fill buffer with alternating 0's and 1's.\n"
+ "                                      %s - Fill buffer with random data.\n"
+ "                                      %s - Fill buffer with the transfer\n"
++"                                      %s - Fill buffer with the seed pattern\n"
+ "                                               number.\n"
+ "                                   The default pattern is %s.\n"
+-"   SEED                            Used to seed the random number generator\n"
+-"                                   Must be >= 1 and <= 2^32.\n"
++"   SEED                            Used to seed the random number generator or\n"
++"                                   as the byte pattern for the user defined fill\n"
++"                                   depending on the pattern type selected.\n"
++"                                   Must be >= 1 and <= 2^32 for random pattern.\n"
++"                                   Must be >= 0 and <= 255 for user pattern.\n"
+ "   TRANSFER_SIZE                   Total number of bytes to transfer per\n" 
+ "                                   job (must be an even multiple of \n"
+ "                                   BUFFER_SIZE). TRANSER_SIZE can be\n"
+@@ -178,8 +184,11 @@
+                Transfer::BUFFER_SIZE_INCREMENT,
+                Transfer::BUFFER_SIZE_INCREMENT,
+                PATTERN_LOOKUP[Job::PATTERN_ZEROS],
++               PATTERN_LOOKUP[Job::PATTERN_ONES],
++               PATTERN_LOOKUP[Job::PATTERN_ALTERNATING],
+                PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+                PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
++               PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+                PATTERN_LOOKUP[DEFAULT_PATTERN]);
+       cout << outStr << endl;
+ }
+
+
+

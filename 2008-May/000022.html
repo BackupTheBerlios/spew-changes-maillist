@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r77 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2008-May/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r77%20-%20trunk/src&In-Reply-To=%3C200805092345.m49Nj02s019607%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000021.html">
+   <LINK REL="Next"  HREF="000023.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r77 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r77%20-%20trunk/src&In-Reply-To=%3C200805092345.m49Nj02s019607%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r77 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Sat May 10 01:45:00 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000021.html">[Spew-changes] r76 - trunk/src
+</A></li>
+        <LI>Next message: <A HREF="000023.html">[Spew-changes] r78 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#22">[ date ]</a>
+              <a href="thread.html#22">[ thread ]</a>
+              <a href="subject.html#22">[ subject ]</a>
+              <a href="author.html#22">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2008-05-10 01:44:59 +0200 (Sat, 10 May 2008)
+New Revision: 77
+
+Modified:
+   trunk/src/WriteJob.cpp
+Log:
+Don't truncate file on write if -o|--offset is used and != 0.
+
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2008-05-09 22:38:24 UTC (rev 76)
++++ trunk/src/WriteJob.cpp	2008-05-09 23:44:59 UTC (rev 77)
+@@ -76,10 +76,12 @@
+    int flags;
+ 
+ #ifdef O_LARGEFILE
+-   flags = O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE;
++   flags = O_WRONLY|O_CREAT|O_LARGEFILE;
+ #else
+-   flags = O_WRONLY|O_CREAT|O_TRUNC;
++   flags = O_WRONLY|O_CREAT;
+ #endif
++	if (mOffset == 0)
++		flags |= O_TRUNC;
+    switch (mIOMethod)
+    {
+    case ASYNCH_IO:
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000021.html">[Spew-changes] r76 - trunk/src
+</A></li>
+	<LI>Next message: <A HREF="000023.html">[Spew-changes] r78 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#22">[ date ]</a>
+              <a href="thread.html#22">[ thread ]</a>
+              <a href="subject.html#22">[ subject ]</a>
+              <a href="author.html#22">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,2605 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r93 - in tags: . 1.0.8 1.0.8/man 1.0.8/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2010-May/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r93%20-%20in%20tags%3A%20.%201.0.8%201.0.8/man%201.0.8/src&In-Reply-To=%3C201005140556.o4E5unwG002423%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000037.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r93 - in tags: . 1.0.8 1.0.8/man 1.0.8/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r93%20-%20in%20tags%3A%20.%201.0.8%201.0.8/man%201.0.8/src&In-Reply-To=%3C201005140556.o4E5unwG002423%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r93 - in tags: . 1.0.8 1.0.8/man 1.0.8/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Fri May 14 07:56:49 CEST 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000037.html">[Spew-changes] r92 - tags
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2010-05-14 07:56:48 +0200 (Fri, 14 May 2010)
+New Revision: 93
+
+Added:
+   tags/1.0.8/
+   tags/1.0.8/NEWS
+   tags/1.0.8/builder.sh
+   tags/1.0.8/configure.ac
+   tags/1.0.8/man/spew.1.in
+   tags/1.0.8/src/common.cpp
+   tags/1.0.8/src/common.h
+   tags/1.0.8/src/spew.cpp
+Removed:
+   tags/1.0.8/NEWS
+   tags/1.0.8/builder.sh
+   tags/1.0.8/configure.ac
+   tags/1.0.8/man/spew.1.in
+   tags/1.0.8/src/common.cpp
+   tags/1.0.8/src/common.h
+   tags/1.0.8/src/spew.cpp
+Log:
+Updated 1.0.8 tag.
+
+
+Copied: tags/1.0.8 (from rev 80, trunk)
+
+Deleted: tags/1.0.8/NEWS
+===================================================================
+--- trunk/NEWS	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/NEWS	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,102 +0,0 @@
+-Changes since 1.0.6
+-
+-* Fixed a bug where the IOPS counter was not being reset between iterations 
+-  resulting in IOPS increasing after every interation.
+-
+-* Fixed gcc 4.2 and 4.3 compile problems
+-
+-* Spew no longer truncates the file when using the -o|--offset option.
+-
+-Changes since 1.0.5
+-
+-* Ported to IA-64 HP-UX.
+-
+-* Joe Eiler contributed a patch that adds new patterns -- ones, zeros, alt, and
+-user defined. These patterns are all variations of the zeros
+-pattern, but instead 0's, 1's, 0xaa's, or any number between 0 and 255
+-are used in the buffer.
+-
+-* Fixed build problems with GNU/kFreeBSD, which is Debian with a
+-  FreeBSD kernel.
+-
+-* Fixed the following bugs:
+-
+-  Not all data integrity errors were being logged (They were still
+-  being detected, just details were not included in the logfile).
+-
+-  When using the -c|continue-after-error option, all subsequent
+-  transfers after the initial error were reported as errors when using
+-  the -P|--progress option.
+-
+-  Offset into file for reported errors was added twice.
+-
+-  Data range for integrity errors was reported in the log twice.
+-
+-  Transfers with data integrity errors were not added to the total
+-  data transferred, resulting in attempted reads past the end of file.
+-
+-Changes since 1.0.4
+-
+-* Fixed bug in calculating read IOPS.
+-
+-* Fixed double-counting bug when calculating intermediate statistics
+-  (used with --progress option).
+-
+-Changes since 1.0.3
+-
+-* Renamed the executable &quot;snarf&quot; to &quot;gorge&quot; to prevent a naming conflict with 
+-  the Snarf project (<A HREF="http://www.xach.com/snarf/">http://www.xach.com/snarf/</A>).
+-
+-* Fixed various Debian packaging problems.
+-
+-* Command-line options can now be put in rcfiles.
+-  Added an --rc-file option to specify a rcfile on the command-line.
+-  Added an --no-rcfiles option to prevent the reading of standard rcfiles.
+-
+-* I/O's per second (IOPS) statistics are now output to the console and
+-  to the logfile. 
+-
+-* Issue better error messages when command-line options are used incorrectly.
+-
+-* Fixed static builds for HP-UX 11.
+-
+-Changes since 1.0.2
+-
+-* Changed license from Hewlett-Packard proprietary to GPL.  Kudos to 
+-  Hewlett-Packard for agreeing to open source this project.
+-
+-* Don't need to do an initial seek (with the --offset option), since offsets
+-  are contained in each transfer.  This fixes a bug when writing to
+-  tape drives where seeks are illegal.
+-
+-Changes since 1.0.1
+-
+-* Added an FAQ.
+-
+-* Alphabetically sorted options and parameters in usage and man-pages.
+-
+-* Added a PATTERNS section to the man-page.  This section will describe the 
+-  the various algorithms used for the --pattern option.
+-
+-* Can now use the tebibytes(t) and terabytes(T) units for
+-  the --min-block-size, --max-block-size, --offset options and the the
+-  FILE_SIZE parameter.
+-
+-* I/O error messages are sent to the log file as well as the screen.
+-
+-* Read and write under-run are no longer treated as errors.  Under-runs
+-  are now logged instead.
+-
+-
+-Changes since 1.0.0
+-
+-* Fixed a segmentation fault when using random block sizes with the --progress
+-  option.
+-
+-* Fixed a memory leak that occurs when --iterations is 0 or greater
+-  than 1.
+-
+-* Updated the documentation.   
+-
+-
+-
+
+Copied: tags/1.0.8/NEWS (from rev 91, trunk/NEWS)
+
+Deleted: tags/1.0.8/builder.sh
+===================================================================
+--- trunk/builder.sh	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/builder.sh	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,92 +0,0 @@
+-#!/bin/sh
+-
+-if [ $# -lt 1 ]
+-then
+-cat &gt;&amp;2 &lt;&lt;EOF
+-Usage: `basename $0` &lt;arch&gt;
+-
+-where &lt;arch&gt; is one of:
+-
+-   linux-ia32
+-   linux-ia64
+-   linux-parisc64
+-   cygwinxp-ia32
+-   hpux11-parisc64
+-   hpux11-ia64
+-
+-EOF
+-    exit 1
+-fi
+-
+-arch=$1
+-cxxflags=&quot;&quot;
+-ldflags=&quot;&quot;
+-configopts=--enable-static-link
+-cxx=g++
+-cc=gcc
+-MAKE=make
+-TAR=tar
+-TAR_FLAGS=-cf
+-TAR_EXT=tgz
+-COMPRESS=gzip
+-COMPRESS_FLAGS=-c
+-
+-case $arch in
+-    linux-ia32)
+-      libs=&quot;-ldl&quot;
+-      ;;
+-    linux-ia64)
+-      libs=&quot;-ldl&quot;
+-      ;;
+-    linux-parisc64)
+-      libs=&quot;-ldl&quot;
+-      ;;
+-    cygwinxp-ia32)
+-      TAR=zip
+-      TAR_FLAGS=-r 
+-      TAR_EXT=zip
+-      ;;
+-     hpux11-ia64)
+-     cxx=g++
+-     cc=gcc
+-     MAKE=gmake
+-     TAR=/usr/bin/tar
+-     COMPRESS=/usr/local/bin/gzip
+-     COMPRESS_FLAGS=-c
+-     ldflags=&quot;-L /usr/local/lib/hpux32&quot;
+-     libs=&quot;-lncurses -lpopt -lintl -liconv&quot;
+-     cxxflags=&quot;-I/usr/local/include -I/usr/local/include/ncurses&quot;
+-     ;;
+-    *)
+-      echo &quot;error: unknown architecture -- use one of linux-ia32, linux-ia64, linux-parisc64, cygwinxp-ia32, or hpux11-ia64&quot; &gt;&amp;2
+-      exit 1
+-      ;;
+-esac
+-
+-# Get version
+-program_name=`sed -n -e 's/AM_INIT_AUTOMAKE(\(.*\),.*$/\1/p' configure.ac`
+-age=`sed -n -e 's/.*SPEW_AGE=\([^:space:].*$\)/\1/p' configure.ac`
+-revision=`sed -n -e 's/.*SPEW_REVISION=\([^:space:].*$\)/\1/p' configure.ac`
+-current=`sed -n -e 's/.*SPEW_CURRENT=\([^:space:].*$\)/\1/p' configure.ac`
+-
+-distname=&quot;${program_name}-${age}.${revision}.${current}.${arch}&quot;
+-topdir=`pwd`
+-builddir=${topdir}/${distname}
+-installdir=${builddir}/usr/local
+-tarfile=${distname}.tgz
+-
+-rm -f ${tarfile}
+-rm -rf ${builddir}
+-mkdir -p ${installdir}
+-if [ -f  Makefile ]
+-then
+-  ${MAKE} distclean
+-fi
+-LIBS=&quot;$libs&quot; CC=${cc} CXX=${cxx} CXXFLAGS=&quot;$cxxflags&quot; LD=${ld} LDFLAGS=&quot;$ldflags&quot; ./configure $configopts
+-${MAKE} clean all
+-${MAKE} install prefix=${installdir}
+-
+-( cd ${builddir} &amp;&amp; ${TAR} ${TAR_FLAGS} - . | ${COMPRESS} ${COMPRESS_FLAGS} &gt; ${topdir}/${distname}.${TAR_EXT} )
+-
+-rm -rf ${builddir}
+-
+
+Copied: tags/1.0.8/builder.sh (from rev 88, trunk/builder.sh)
+
+Deleted: tags/1.0.8/configure.ac
+===================================================================
+--- trunk/configure.ac	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/configure.ac	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,111 +0,0 @@
+-#                                               -*- Autoconf -*-
+-# Process this file with autoconf to produce a configure script.
+-
+-AC_PREREQ(2.57)
+-AC_INIT(src/spew.cpp)
+-AC_CONFIG_AUX_DIR(config)
+-AM_CONFIG_HEADER(config.h)
+-AM_MAINTAINER_MODE
+-
+-SPEW_AGE=1
+-SPEW_REVISION=0
+-SPEW_CURRENT=7
+-AC_SUBST(SPEW_AGE)
+-AC_SUBST(SPEW_REVISION)
+-AC_SUBST(SPEW_CURRENT)
+-VERSION=$SPEW_AGE.$SPEW_REVISION.$SPEW_CURRENT
+-
+-AM_INIT_AUTOMAKE(spew, $VERSION)
+-
+-# Checks for programs.
+-AC_PROG_CXX
+-AC_PROG_CC
+-AC_PROG_INSTALL
+-AC_PROG_MAKE_SET
+-AC_PROG_RANLIB
+-AC_PROG_LN_S
+-
+-# Checks for libraries.
+-AC_CHECK_LIB(popt, poptGetContext, ,AC_MSG_ERROR([PACKAGE] requires popt))
+-AC_CHECK_LIB(ncurses, wresize, ,AC_MSG_ERROR([PACKAGE] requires ncurses))
+-
+-# Checks for header files.
+-AC_HEADER_STDC
+-AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h sys/time.h unistd.h paths.h])
+-
+-# Common defines
+-AC_DEFINE(_GNU_SOURCE, 1, GNU extensions.)
+-AC_DEFINE(_REENTRANT, 1, Use reentrant code if available.)
+-
+-# Checks for typedefs, structures, and compiler characteristics.
+-AC_HEADER_STDBOOL
+-AC_C_CONST
+-AC_TYPE_OFF_T
+-AC_TYPE_SIZE_T
+-AC_HEADER_TIME
+-AC_CHECK_DECL(O_DIRECT,AC_DEFINE(HAVE_DIRECT_IO,[1],Define to 1 if direct I/O is available.),,[#include &lt;fcntl.h&gt;])
+-AC_CHECK_DECL(TIOCGWINSZ,AC_DEFINE(HAVE_WINSIZE_IOCTL,[1],Define to 1 if there is an ioctl to get the window size.),,[#include &lt;sys/ioctl.h&gt;])
+-AC_CHECK_DECL(WIOCGETD,AC_DEFINE(HAVE_WINSIZE_IOCTL,[1],Define to 1 if there is an ioctl to get the window size.),,[#include &lt;sys/ioctl.h&gt;])
+-AC_SYS_LARGEFILE
+-
+-# Functionality checks.
+-AC_CHECK_DECL(MNT_MNTTAB,AC_DEFINE(MNTTAB_PATH,MNT_MNTTAB,Path to mtab/mnttab),,[#include &lt;mntent.h&gt;])
+-AC_CHECK_DECL(_PATH_MOUNTED,AC_DEFINE(MNTTAB_PATH,_PATH_MOUNTED,Path to mnttab),,[#include &lt;paths.h&gt;])
+-AC_CHECK_DECL(MNTTAB_PATH,mnttab=yes,mnttab=no,)
+-if test &quot;$mnttab&quot; = yes; then
+-AC_CHECK_FUNC([getmntent],AC_DEFINE(HAVE_MOUNT_CHECK,[1],Define to 1 if getmntent can be used to get mounted file systems.),,)
+-fi
+-
+-# Get typedefs for 32 and 64 bit unsigned integers.
+-AC_CHECK_SIZEOF(unsigned int)
+-AC_CHECK_SIZEOF(unsigned long)
+-AC_CHECK_SIZEOF(unsigned long long)
+-if test &quot;$ac_cv_sizeof_unsigned_int&quot; -eq 4; then
+-  AC_DEFINE(UINT32_TYPE, [unsigned int], Unsigned 4-byte integer)
+-elif test &quot;$ac_cv_sizeof_unsigned_long&quot; -eq 4; then
+-  AC_DEFINE(UINT32_TYPE, [unsigned long], Unsigned 4-byte integer)
+-elif test &quot;$ac_cv_sizeof_unsigned_long_long&quot; -eq 4; then
+-  AC_DEFINE(UINT32_TYPE, [unsigned long long], Unsigned 4-byte integer)
+-else
+-  AC_MSG_ERROR([compiler has no 4-byte unsigned integer])
+-fi
+-if test &quot;$ac_cv_sizeof_unsigned_int&quot; -eq 8; then
+-  AC_DEFINE(UINT64_TYPE, [unsigned int], Unsigned 8-byte integer)
+-elif test &quot;$ac_cv_sizeof_unsigned_long&quot; -eq 8; then
+-  AC_DEFINE(UINT64_TYPE, [unsigned long], Unsigned 8-byte integer)
+-elif test &quot;$ac_cv_sizeof_unsigned_long_long&quot; -eq 8; then
+-  AC_DEFINE(UINT64_TYPE, [unsigned long long], Unsigned 8-byte integer)
+-else
+-  AC_MSG_ERROR([compiler has no 8-byte unsigned integer])
+-fi
+-
+-# Checks for library functions.
+-AC_FUNC_MALLOC
+-AC_TYPE_SIGNAL
+-AC_FUNC_VPRINTF
+-AC_CHECK_FUNCS([getpagesize gettimeofday memset strerror strsignal strrchr localtime_r])
+-
+-# Add --enable-static
+-AC_ARG_ENABLE(static-link,
+-	[  --enable-static-link         link spew statically],
+-	[ case &quot;$enableval&quot; in
+-          yes) static_spew=yes ;;
+-          no) static_spew=no;;
+-          esac
+-        ],
+-	static_spew=no)
+-
+-STATIC_LINK=&quot;&quot;
+-if test &quot;x$static_spew&quot; = &quot;xyes&quot; ; then
+-  if test &quot;x`uname`&quot; = &quot;xHP-UX&quot; ; then
+-    STATIC_LINK=&quot;-Wl,-a,archive_shared&quot;
+-  else
+-    STATIC_LINK=&quot;-static&quot;
+-  fi
+-fi
+-AC_SUBST(STATIC_LINK)
+-
+-CXXFLAGS=&quot;$CXXFLAGS -DSYSCONFDIR=${sysconfdir}&quot;
+-
+-AC_CONFIG_FILES([src/Makefile man/Makefile etc/Makefile])
+-AC_OUTPUT(Makefile)
+
+Copied: tags/1.0.8/configure.ac (from rev 87, trunk/configure.ac)
+
+Deleted: tags/1.0.8/man/spew.1.in
+===================================================================
+--- trunk/man/spew.1.in	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/man/spew.1.in	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,320 +0,0 @@
+-.\&quot; DO NOT MODIFY THIS FILE!  It was generated by help2man 1.36.
+-.TH SPEW &quot;1&quot; &quot;May 2008&quot; &quot;spew 1.0.7&quot; &quot;User Commands&quot;
+-.SH NAME
+-spew \- measures I/O performance and/or generates I/O load
+-.SH SYNOPSIS
+-.B spew
+-\fI--write|--read|--read-after-write \fR[\fIOPTION\fR]... \fITRANSFER_SIZE\fR[\fIkKmMgG\fR] \fIFILE\fR
+-.SH DESCRIPTION
+-An I/O performance measurement and load generation tool. Writes and/or
+-reads generated data to or from a character device, block device, or
+-regular file.
+-.TP
+-\fB\-B\fR, \fB\-\-max\-buffer\-size\fR=\fIBUFFER_SIZE\fR
+-Each read(2)/write(2) call uses a
+-maximum buffer of size BUFFER_SIZE.
+-.TP
+-\fB\-b\fR, \fB\-\-min\-buffer\-size\fR=\fIBUFFER_SIZE\fR
+-Each read(2)/write(2) call uses a
+-minimum buffer of size BUFFER_SIZE.
+-.TP
+-\fB\-c\fR, \fB\-\-continue\-after\-error\fR
+-Continue after data integrity errors.
+-.TP
+-\fB\-d\fR, \fB\-\-direct\fR
+-Use direct I/O. Should only be used on
+-block device files. Not all operating
+-systems support direct I/O
+-.TP
+-\fB\-g\fR, \fB\-\-generate\-load\fR
+-Equivalent to: \fB\-v\fR \fB\-t\fR \fB\-P\fR \fB\-p\fR random \fB\-i\fR 0.
+-.TP
+-\fB\-i\fR, \fB\-\-iterations\fR=\fICOUNT\fR
+-Write/read data COUNT times. If count
+-is 0, repeats forever.
+-.TP
+-\fB\-l\fR, \fB\-\-logfile\fR=\fILOGFILE\fR
+-Send log messages to LOGFILE.
+-.TP
+-\fB\-\-no\-progress\fR
+-Don't show progress (default).
+-.TP
+-\fB\-\-no\-rcfiles\fR
+-Don't use standard rcfiles.
+-.TP
+-\fB\-q\fR, \fB\-\-no\-statistics\fR
+-Don't output statistics.
+-.TP
+-\fB\-\-no\-tui\fR
+-Don't use TUI interface.
+-.TP
+-\fB\-o\fR, \fB\-\-offset\fR=\fIOFFSET\fR
+-Seek to OFFSET before starting I/O.
+-.TP
+-\fB\-P\fR, \fB\-\-progress\fR
+-Show progress.
+-.TP
+-\fB\-p\fR, \fB\-\-pattern\fR=\fIPATTERN\fR
+-Use data pattern PATTERN when reading
+-or writing data.
+-.TP
+-\fB\-r\fR, \fB\-\-random\fR
+-Read/Write buffers to random offsets.
+-.TP
+-\fB\-\-raw\fR
+-An alias for \fB\-\-read\-after\-write\fR.
+-.TP
+-\fB\-\-rcfile\fR=\fIRCFILE\fR
+-Read command\-line options from RCFILE.
+-.TP
+-\fB\-\-read\fR
+-Read date from FILE.
+-.TP
+-\fB\-\-read\-after\-write\fR
+-Read back data after writing to FILE.
+-.TP
+-\fB\-S\fR, \fB\-\-seed\fR=\fISEED\fR
+-Use SEED for random number seed.
+-.TP
+-\fB\-s\fR, \fB\-\-sync\fR
+-Use synchronous I/O.
+-.TP
+-\fB\-\-statistics\fR
+-Output statistics (default).
+-.TP
+-\fB\-t\fR, \fB\-\-tui\fR
+-Use curses\-based, terminal user
+-interface.
+-.TP
+-\fB\-u\fR, \fB\-\-units\fR=\fIUNITS\fR
+-Show transfer rate in UNITS units.
+-.TP
+-\fB\-\-usage\fR
+-Show brief usage message and exit.
+-.TP
+-\fB\-V\fR, \fB\-\-version\fR
+-Output version information and exit.
+-.TP
+-\fB\-v\fR, \fB\-\-detailed\-statistics\fR
+-Output detailed statistics.
+-.TP
+-\fB\-\-write\fR
+-Write data to FILE.
+-.TP
+-\-?, \fB\-\-help\fR
+-Show this help and exit.
+-.TP
+-FILE
+-Regular or device file to write data to.
+-.TP
+-LOGFILE
+-Path to a file used for logging.
+-.TP
+-MAX_BUFFER_SIZE
+-Minimum buffer size used in each
+-read(2)/write(2) call (default is
+-MIN_BUFFER_SIZE bytes).
+-MAX_BUFFER_SIZE. Must be an even
+-multiple of 512 bytes and can be
+-specified in bytes,
+-kibibytes(k), kilobytes(K),
+-mebibytes(m), megabytes(M),
+-gibibytes(g), gigabytes(G).
+-tebibytes(t), or terabytes(T).
+-MAX_BUFFER_SIZE defaults to
+-MIN_BUFFER_SIZE.  If MAX_BUFFER_SIZE &gt;
+-MIN_BUFFER_SIZE, random buffers sizes
+-between the two limits are used.
+-MAX_BUFFER_SIZE must be an even
+-multiple of MIN_BUFFER_SIZE.
+-.TP
+-MIN_BUFFER_SIZE
+-Minimum buffer size used in each
+-read(2)/write(2) call (default is
+-512 bytes).
+-MIN_BUFFER_SIZE. Must be an even
+-multiple of 512 bytes and can be
+-specified in bytes,
+-kibibytes(k), kilobytes(K),
+-mebibytes(m), megabytes(M),
+-gibibytes(g), gigabytes(G).
+-tebibytes(t), or terabytes(T).
+-.TP
+-OFFSET
+-Position to seek to in the file before
+-starting I/O (default is 0). OFFSET
+-must be an even multiple of 512 bytes
+-and can be specified in bytes,
+-kibibytes(k), kilobytes(K),
+-mebibytes(m), megabytes(M),
+-gibibytes(g), gigabytes(G).
+-tebibytes(t), or terabytes(T).
+-.TP
+-PATTERN
+-Data pattern used when writing/reading
+-data. Available patterns are: none,
+-zeros, ones, alt, random, numbers, and &quot;#&quot;
+-(where &quot;#&quot; is a number between 0\-255). The
+-default pattern is &quot;none&quot;.
+-.TP
+-RCFILE
+-Read additional command\-line options
+-from RCFILE.  Other options on the
+-command\-line will override options in
+-RCFILE.
+-.TP
+-SEED
+-Used to seed the random number generator
+-Must be &gt;= 1 and &lt;= 2^32.
+-.TP
+-TRANSFER_SIZE
+-Total number of bytes to transfer (must
+-be an even multiple of both
+-MIN_BUFFER_SIZE and MAX_BUFFER)SIZE).
+-TRANSFER_SIZE can be specified in
+-bytes, kilobytes, megabytes, or
+-gigabytes.
+-.TP
+-UNITS
+-Kibibytes(k), kilobytes(K),
+-mebibytes(m), megabytes(M),
+-gibibytes(g), gigabytes(G).
+-tebibytes(t), or terabytes(T).
+-.SH EXAMPLES
+-\fBspew --write -b 16k 1m /tmp/bigfile\fR
+-.PP
+-or
+-.PP
+-\fBspew -b 16k 1m /tmp/bigfile\fR
+-.PP
+-Writes 1 mebibyte (1 mebibyte = 1024*1024 bytes) using 16 kibibytes (1
+-kibibyte = 1024 bytes) requests to the file \fI/tmp/bigfile\fR using
+-the default pattern (random).
+-.
+-Displays the write transfer rate in kibibytes per second and the write
+-transfer time in seconds.
+-.
+-.PP
+-\fBspew --write -u m -i 10 -b 1k 256k /dev/sda1\fR
+-.PP
+-or
+-.PP
+-\fBspew -u m -i 10 -b 1k 256k /dev/sda1\fR
+-.PP
+-Writes 256 kibibytes using 1 kibibyte requests to the block device file
+-\fI/dev/sda1\fR 10 times using the default pattern (random).
+-.
+-The iteration and cumulative write transfer rates are displayed in
+-mebibytes per second and the iteration and cumulative write transfer times are
+-displayed in seconds.
+-.PP
+-\fBspew --raw -d -o 1m -b 16m 1g /tmp/bigfile\fR
+-.PP
+-or
+-.PP
+-\fBregorge -s -o 1m -b 16m 1g /tmp/bigfile\fR
+-.PP
+-Write 1 gibibyte (1 gibibyte = 1024*1024*1024 bytes) starting at an
+-offset of 1 mebibyte using 16 mebibyte requests to the file
+-\fI/tmp/bigfile\fR using the default pattern (random).
+-. 
+-The data is written synchronously and flushed at file close.
+-.
+-Then read in the same data using the same request size and offset.
+-.
+-The data is checked to ensure that the data read in matches the data
+-read out.
+-.
+-Write and read tranfer rates are displayed in kibibytes/second.  Read
+-are write transfer times are displayed in seconds.
+-.PP
+-\fBspew --read -i 0 -u M -p zeros -b 512 1m /dev/zero\fR
+-.PP
+-or
+-.PP
+-\fBgorge -i 0 -u M -p zeros -b 512 1m /dev/zero\fR
+-.PP
+-Read 1 mebibyte of data using 512 byte requests from the file
+-\fI/dev/zero\fR an infinite number of times using the zeros pattern
+-(don't check the data).
+-.
+-The iteration and cumulative read transfer rates are displayed in
+-megabytes (1 megabyte = 1,000,000 bytes) per second and the iteration
+-and cumulative read transfer times are displayed in seconds.
+-.PP
+-\fBspew --raw -g -r -b 1k -B 256K 1t /dev/md1\fR
+-.PP
+-or
+-.PP
+-\fBregorge -g -r -b 1k -B 256K 1t /dev/md1\fR
+-.PP
+-Write 1 tebibyte (1 tebibyte = 1024*1024*1024*1024 bytes) using 1-256
+-kibibyte requests to the block device \fI/dev/md1\fR using the random
+-pattern.  Random seeks are performed before each transfer, but each
+-block between the start and end of the data is written exactly once.
+-.
+-The request sizes are chosen randomly.
+-. 
+-Then read in the same data using the same request sizes and seeks in
+-the same sequence.
+-.
+-Repeat the above sequence an infinite number of times until told to
+-quit (via signal or TUI command).
+-.PP
+-The data is checked to ensure that the data read in matches the data
+-read out.
+-.
+-A curses-based TUI is used to display iteration and cumulative transfer
+-rates, transfer times, and bytes transferred.
+-.
+-Display verbose statistics after quitting.
+-.
+-.SH ALGORITHMS
+-.
+-The following algorithm is used to determine blocksize when
+-MAX_BUFFER_SIZE &gt; MIN_BUFFER_SIZE:
+-.PP
+-Find the largest blocksize that is a power of 2 and is &gt;=
+-MAX_BUFFER_SIZE.
+-.
+-Call this maxbuffersize. Find the smallest buffersize that is a power
+-of 2 and is &gt;= MIN_BUFFER_SIZE. Call this minbuffersize.
+-.
+-Chunksize = maxbuffersize * (difference in number of bits between min
+-and maxbuffersize + 1).
+-.
+-The number of chunks is TRANSFER_SIZE/chunksize. Call this numchunks.
+-.
+-There will be numchunks number of read/writes that are of size
+-maxbuffersize, 2 * numchunks number of read/writes that are of size
+-maxbuffersize/2, 4 * numchunks number of read/writes that are of size
+-maxbuffersize/4, and so on until minbuffersize is reached.
+-.
+-MIN_BUFFER_SIZE is used for any remaining transfers if TRANSFER_SIZE
+-is not evenly divisible by chunksize.
+-.PP
+-Example: Using a MIN_BLOCK_SIZE of 1k, a MAX_BLOCK_SIZE of 8k and a
+-TRANSFER_SIZE of 264k results in 8 8k read/writes, 16 4k read/write,
+-32 2k read/writes, and 64 + 8 1k read/writes.
+-.SH PATTERNS
+-.
+-Use the following od(1) command to examine spew generated files where a data
+-integrity problem has occurred:
+-.PP
+-od -A d --format=d8 --width=32  &lt;file&gt;
+-.PP
+-.SH FILES
+-.TP
+-\fl$HOME/.spewrc\fR or \fl$SPEWRC\fR
+-Holds user default options. These options precede any options included
+-on the command-line.
+-.TP
+-\flSYSCONFDIR/spew.conf\fR
+-Holds system-wide default options.  These options precede any options
+-included on the command-line  and options included from \fl$HOME/.spewrc\fR or \fl$SPEWRC\fR.
+-.SH AUTHOR
+-Written by Andrew Patterson &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/spew-changes">andrew.patterson at hp.com</A>&gt;
+-.SH &quot;REPORTING BUGS&quot;
+-Report bugs to Andrew Patterson &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/spew-changes">andrew.patterson at hp.com</A>&gt;.
+-.PP
+-Copyright 2007 Hewlett\-Packard Corp.
+
+Copied: tags/1.0.8/man/spew.1.in (from rev 87, trunk/man/spew.1.in)
+
+Deleted: tags/1.0.8/src/common.cpp
+===================================================================
+--- trunk/src/common.cpp	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/src/common.cpp	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,191 +0,0 @@
+-//////////////////////////  -*-C++-*- /////////////////////////////////////////
+-//
+-// common.cpp
+-//
+-// Spew
+-//
+-// Copyright (C) 2004 Hewlett-Packard Corp.
+-//
+-//
+-// This program is free software; you can redistribute it and/or modify it
+-// under the terms of the GNU General Public License as published by the
+-// Free Software Foundation version 2 of the License.
+-// 
+-// This program is distributed in the hope that it will be useful, but
+-// WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-// General Public License for more details.
+-// 
+-// You should have received a copy of the GNU General Public License along
+-// with this program; if not, write to the Free Software Foundation, Inc.,
+-// 675 Mass Ave, Cambridge, MA 02139, USA.
+-
+-namespace std {} using namespace std;
+-
+-#ifdef HAVE_CONFIG_H
+-#include &lt;config.h&gt;
+-#endif
+-
+-#include &lt;stdio.h&gt;
+-#include &lt;stdarg.h&gt;
+-#include &lt;unistd.h&gt;
+-#include &lt;math.h&gt;
+-#include &lt;mntent.h&gt;
+-#include &lt;sys/types.h&gt;
+-#include &lt;sys/stat.h&gt;
+-#include &lt;cstring&gt;
+-#ifdef HAVE_PATHS_H
+-#include &lt;paths.h&gt;
+-#endif
+-
+-#include &quot;common.h&quot;
+-
+-static const char *TRANSFER_RATE_UNITS_STR_LOOKUP[] = 
+-{
+-   &quot;KiB/s&quot;,
+-   &quot;KB/s&quot;,
+-   &quot;MiB/s&quot;,
+-   &quot;MB/s&quot;,
+-   &quot;GiB/s&quot;,
+-   &quot;GB/s&quot;,
+-   &quot;TiB/s&quot;,
+-   &quot;TB/s&quot;,
+-   (char *)NULL,
+-};
+-
+-
+-static capacity_t TRANSFER_RATE_UNITS_CONV_LOOKUP[] = 
+-{
+-   1024ULL,
+-   1000ULL,
+-   1024ULL * 1024ULL,
+-   1000ULL * 1000ULL,
+-   1024ULL * 1024ULL * 1024ULL,
+-   1000ULL * 1000ULL * 1000ULL,
+-   1024ULL * 1024ULL * 1024ULL * 1024ULL,
+-   1000ULL * 1000ULL * 1000ULL * 1000ULL,
+-};
+-
+-
+-static const size_t MAX_SPRINTF_CHARS = 2048;
+-static const size_t MAX_STR_CHARS = 1024;
+-
+-
+-/////////////////////////  basename()  ///////////////////////////////////////
+-const char *basename(char *path)
+-{
+-   char *name = strrchr(path, '/');
+-   if (name == NULL)
+-      return path;
+-   else
+-      return name + 1;
+-}
+-
+-
+-#ifdef HAVE_MOUNT_CHECK
+-/////////////////////////  is_mounted()  /////////////////////////////////////
+-bool is_mounted(const char *path)
+-{
+-   struct stat statbuf;
+-   dev_t path_rdev;
+-
+-   if (stat(path, &amp;statbuf) &lt; 0)
+-      return false;
+-
+-   if (!S_ISBLK(statbuf.st_mode))
+-      return false;
+-   path_rdev = statbuf.st_rdev;
+-
+-   FILE *mtabfile;
+-   struct mntent *ent;
+-
+-   mtabfile = setmntent(MNTTAB_PATH, &quot;r&quot;);
+-   while ((ent = getmntent(mtabfile)) != (struct mntent *)NULL)
+-   {
+-      if (stat(ent-&gt;mnt_fsname, &amp;statbuf) &lt; 0)
+-         continue;
+-      if (path_rdev == statbuf.st_rdev)
+-      {
+-         return true;
+-      }
+-   }
+-   endmntent(mtabfile);
+-   
+-   return false;
+-}
+-#endif // HAVE_MOUNT_CHECK
+-
+-
+-///////////////////////  strPrintf()  /////////////////////////////////////////
+-string strPrintf(const char *fmt, ...)
+-{
+-   char *tmpStr = new char[MAX_SPRINTF_CHARS + 1];
+-
+-   va_list ap;
+-   va_start(ap, fmt);
+-   vsnprintf(tmpStr, MAX_SPRINTF_CHARS, fmt, ap);
+-   va_end(ap);
+-
+-   string returnString = tmpStr;
+-   delete[] tmpStr;
+-   return returnString;
+-}
+-
+-
+-///////////////////////  strSignal()  /////////////////////////////////////////
+-string strSignal(int sig)
+-{
+-#ifdef HAVE_STRSIGNAL
+-   return string(strsignal(sig));
+-#else
+-   return strPrintf(&quot;signal %d&quot;, sig); 
+-#endif
+-}
+-
+-
+-///////////////////////  strError()  //////////////////////////////////////////
+-string strError(int error_number)
+-{
+-#ifdef HAVE_STRERROR
+-   return string(strerror(error_number));
+-#else
+-   return strPrintf(&quot;errno %d&quot;, error_number);  
+-#endif
+-}
+-
+-
+-//////////////////////////  ConvertUnits()  ////////////////////////////////
+-long double convertCapacity(long double bytes, Units_t units)
+-{
+-   return bytes/(long double)TRANSFER_RATE_UNITS_CONV_LOOKUP[units];
+-}
+-
+-
+-////////////////  getTransferRateUnitStr()  ///////////////////////////////////
+-const char *getTransferRateUnitsStr(Units_t units)
+-{
+-   return TRANSFER_RATE_UNITS_STR_LOOKUP[units];
+-}
+-
+-
+-////////////////////////  localTime()  ////////////////////////////////////////
+-//
+-// Encapsulate thread-safe/non-thread safe versions of localtime.  Note that
+-// this function is not thread-safe unless localtime_r is actually available 
+-// (which means using pthreads on some platforms, e.g., HP-UX).
+-//
+-void localTime(const time_t *timep, struct tm *result)
+-{
+-   time_t currentTime;
+-   struct tm currentBrokenDownTime;
+-   struct tm *currentBrokenDownTimePtr;
+-   
+-   time(&amp;currentTime);
+-#ifdef HAVE_LOCALTIME_R
+-   currentBrokenDownTimePtr = localtime_r(&amp;currentTime, 
+-                                          &amp;currentBrokenDownTime);
+-#else
+-   currentBrokenDownTimePtr = localtime_r(&amp;currentTime);
+-#endif
+-   memcpy(result, currentBrokenDownTimePtr, sizeof(struct tm));
+-}
+
+Copied: tags/1.0.8/src/common.cpp (from rev 84, trunk/src/common.cpp)
+
+Deleted: tags/1.0.8/src/common.h
+===================================================================
+--- trunk/src/common.h	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/src/common.h	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,120 +0,0 @@
+-//////////////////////////  -*-C++-*- /////////////////////////////////////////
+-//
+-// common.h
+-//
+-// Spew
+-//
+-// Copyright (C) 2004 Hewlett-Packard Corp.
+-//
+-//
+-// This program is free software; you can redistribute it and/or modify it
+-// under the terms of the GNU General Public License as published by the
+-// Free Software Foundation version 2 of the License.
+-// 
+-// This program is distributed in the hope that it will be useful, but
+-// WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-// General Public License for more details.
+-// 
+-// You should have received a copy of the GNU General Public License along
+-// with this program; if not, write to the Free Software Foundation, Inc.,
+-// 675 Mass Ave, Cambridge, MA 02139, USA.
+-
+-#ifndef COMMON_H
+-#define COMMON_H
+-
+-#include &lt;time.h&gt;
+-#include &lt;sys/time.h&gt;
+-#include &lt;string&gt;
+-#include &lt;stdlib.h&gt;
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-///////////////////////////  Macros  /////////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-#define ROUND_UP_OFFSET(X, M) ((M) - 1 - (((X) + (M) - 1) % (M)))
+-#define PTR_ALIGN(Ptr, M) ((Ptr) \
+-                           + ROUND_UP_OFFSET ((char *)(Ptr) - (char *)0, (M)))
+-
+-#ifndef max
+-#define max(X,Y) ((X) &gt;= (Y) ? (X) : (Y))
+-#endif
+-
+-#define STRINGIFY(s) #s
+-#define QUOTE(s) STRINGIFY(s)
+-
+-//////////////////////////////////////////////////////////////////////////////
+-///////////////////////////  Typedefs  ///////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-
+-typedef enum 
+-{
+-   VERBOSITY_NONE, 
+-   VERBOSITY_SHORT, 
+-   VERBOSITY_LONG,
+-} Verbosity_t;
+-
+-typedef enum
+-{
+-   EXIT_OK = 0,
+-   EXIT_ERROR_USAGE,
+-   EXIT_ERROR_INVALID_USAGE,
+-   EXIT_ERROR_PERM,
+-   EXIT_ERROR_SYSTEM,
+-   EXIT_ERROR_ILLEGAL_OPERATION,
+-   EXIT_ERROR_CAUGHT_EXCEPTION,
+-   EXIT_ERROR_DATA_INTEGRITY,
+-   EXIT_ERROR_MEMORY_ALLOC,
+-   EXIT_ERROR_UNDERRUN,
+-   EXIT_ERROR_IO,
+-   EXIT_ERROR_SCREEN_SIZE,
+-} ExitCode_t;
+-
+-typedef enum 
+-{
+-   KIBIBYTES,
+-   KILOBYTES,
+-   MEBIBYTES,
+-   MEGABYTES,
+-   GIBIBYTES,
+-   GIGABYTES,
+-   TEBIBYTES,
+-   TERABYTES,
+-} Units_t;
+-
+-typedef enum
+-{
+-   READING,
+-   WRITING,
+-} IoDirection_t;
+-
+-typedef UINT32_TYPE u32_t;
+-typedef UINT64_TYPE u64_t;
+-typedef unsigned long long capacity_t;
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-///////////////////////////  Constants  //////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-#ifdef __CYGWIN__
+-static const unsigned int DEFAULT_SCREEN_ROWS = 25;
+-static const unsigned int DEFAULT_SCREEN_COLUMNS = 79;
+-#else
+-static const unsigned int DEFAULT_SCREEN_ROWS = 24;
+-static const unsigned int DEFAULT_SCREEN_COLUMNS = 80;
+-#endif
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-///////////////////////////  Functions  //////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-const char *basename(char *path);
+-string strPrintf(const char *fmt, ...);
+-string strSignal(int sig);
+-string strError(int error_number);
+-bool is_mounted(const char *path);
+-long double convertCapacity(long double bytes, Units_t units);
+-const char *getTransferRateUnitsStr(Units_t units);
+-void localTime(const time_t *timep, struct tm *result);
+-
+-#endif // COMMON_H
+
+Copied: tags/1.0.8/src/common.h (from rev 84, trunk/src/common.h)
+
+Deleted: tags/1.0.8/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2008-05-13 04:35:01 UTC (rev 80)
++++ tags/1.0.8/src/spew.cpp	2010-05-14 05:56:48 UTC (rev 93)
+@@ -1,1527 +0,0 @@
+-//////////////////////////  -*-C++-*- /////////////////////////////////////////
+-//
+-// spew.cpp
+-//
+-// Spew
+-//
+-// Copyright (C) 2004 Hewlett-Packard Corp.
+-//
+-//
+-// This program is free software; you can redistribute it and/or modify it
+-// under the terms of the GNU General Public License as published by the
+-// Free Software Foundation version 2 of the License.
+-// 
+-// This program is distributed in the hope that it will be useful, but
+-// WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-// General Public License for more details.
+-// 
+-// You should have received a copy of the GNU General Public License along
+-// with this program; if not, write to the Free Software Foundation, Inc.,
+-// 675 Mass Ave, Cambridge, MA 02139, USA.
+-
+-namespace std {} using namespace std;
+-
+-#ifdef HAVE_CONFIG_H
+-#include &lt;config.h&gt;
+-#endif
+-
+-#include &lt;string.h&gt;
+-#include &lt;stdlib.h&gt;
+-#include &lt;stdarg.h&gt;
+-#include &lt;stdio.h&gt;
+-#include &lt;unistd.h&gt;
+-#include &lt;sys/types.h&gt;
+-#include &lt;sys/stat.h&gt;
+-#include &lt;sys/time.h&gt;
+-#include &lt;fcntl.h&gt;
+-#include &lt;errno.h&gt;
+-#include &lt;errno.h&gt;
+-#include &lt;ctype.h&gt;
+-#include &lt;iostream&gt;
+-#include &lt;string&gt;
+-#include &lt;vector&gt;
+-#include &lt;list&gt;
+-#include &lt;iterator&gt;
+-#include &lt;string&gt;
+-#include &lt;popt.h&gt;
+-#include &lt;signal.h&gt;
+-
+-#include &quot;common.h&quot;
+-#include &quot;Log.h&quot;
+-#include &quot;Job.h&quot;
+-#include &quot;WriteJob.h&quot;
+-#include &quot;ReadJob.h&quot;
+-#include &quot;Random.h&quot;
+-#include &quot;SpewDisplay.h&quot;
+-#include &quot;SpewConsole.h&quot;
+-#include &quot;SpewTui.h&quot;
+-#include &quot;TransferInfoList.h&quot;
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-///////////////////////////  Typedefs  ///////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-enum operation_enum {OPERATION_NONE,
+-                     OPERATION_WRITE,
+-                     OPERATION_READ, 
+-                     OPERATION_READ_AFTER_WRITE};
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-//////////////////////////  Constants  ///////////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-static const char CANONICAL_PROG_NAME[] = &quot;spew&quot;;
+-static const char *PROG_NAME_LOOKUP[] =
+-{
+-   (char *)NULL,
+-   &quot;spew&quot;,
+-   &quot;gorge&quot;,
+-   &quot;regorge&quot;,
+-   (char *)NULL,
+-
+-};
+-static const char SPEWRC_ENV[] = &quot;SPEWRC&quot;;
+-static const char DEFAULT_SPEWRC_FILENAME[] = &quot;.spewrc&quot;;
+-static const char SYSTEM_SPEWRC_FILENAME[] = &quot;spew.conf&quot;;
+-static const char PROG_VERSION[] = VERSION;
+-static const int MAX_TMP_STR_LEN = 1024;
+-static const unsigned int INDENT_SIZE = 4;
+-static const char INDENT_CHAR = ' ';
+-
+-static const Units_t DEFAULT_UNITS = KIBIBYTES;
+-static const capacity_t DEFAULT_MIN_BUFFER_SIZE = Transfer::BUFFER_SIZE_INCREMENT;
+-static const capacity_t DEFAULT_MAX_BUFFER_SIZE = DEFAULT_MIN_BUFFER_SIZE;
+-static unsigned int DEFAULT_ITERATIONS = 1;
+-
+-static const u32_t DEFAULT_SEED = 0;
+-static const TransferInfoList::fill_method_t DEFAULT_FILL_METHOD = TransferInfoList::SEQUENTIAL_FILL;
+-static const Job::io_method_t DEFAULT_IO_METHOD = Job::ASYNCH_IO;
+-static const Job::pattern_t DEFAULT_PATTERN = Job::PATTERN_NONE;
+-static const char *PATTERN_LOOKUP[] = 
+-{
+-   &quot;none&quot;,
+-   &quot;zeros&quot;,
+-   &quot;ones&quot;,
+-   &quot;alt&quot;,
+-   &quot;numbers&quot;,
+-   &quot;random&quot;,
+-   &quot;#&quot;,
+-   (char *)NULL,
+-};
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-//////////////////////////  Global Variables  ////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-char *gPrgName = NULL;
+-operation_enum gOperation;
+-int gGetVersion = 0;
+-Verbosity_t gVerbosity = VERBOSITY_SHORT;
+-Job::io_method_t gIOMethod = DEFAULT_IO_METHOD;
+-TransferInfoList::fill_method_t gFillMethod = DEFAULT_FILL_METHOD;
+-Units_t gUnits = DEFAULT_UNITS;
+-bool gProgress = false;
+-int gIterationsToDo = 1;
+-int gContinueAfterError = 0;
+-u32_t gSeed = 0;
+-capacity_t gMinBufferSize = DEFAULT_MIN_BUFFER_SIZE;
+-capacity_t gMaxBufferSize = DEFAULT_MAX_BUFFER_SIZE;
+-capacity_t gOffset = 0;
+-Job::pattern_t gPattern = DEFAULT_PATTERN;
+-unsigned char gUserPattern = 0;
+-capacity_t gTransferSize = 0;
+-string gFile = &quot;&quot;;
+-bool gUseTui = false;
+-string gLogfilePath = &quot;&quot;;
+-bool gUseStdRcFiles = true;
+-Log *gLogger = (Log *)NULL;
+-capacity_t gJobId = 0;
+-SpewDisplay *gDisplay = (SpewDisplay *)NULL; 
+-unsigned int gCurrentIteration = 0;
+-TimeHack gTotalReadTransferTime;
+-TimeHack gTotalWriteTransferTime;
+-capacity_t gTotalBytesRead = 0;
+-capacity_t gTotalBytesWritten = 0;
+-capacity_t gTotalWriteOps = 0;
+-capacity_t gTotalReadOps = 0;
+-TimeHack gProgramStartTime;
+-unsigned int gFoundTransferErrors = 0;
+-
+-//////////////////////////////////////////////////////////////////////////////
+-////////////////////  Function Prototypes  ///////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-void error_msg(const char *fmt, ...);
+-void note(const char *fmt, ...);
+-void usage();
+-bool parse_options(int argc, const char **argv, string&amp; cmdArgs);
+-bool validate_options();
+-void end_program(int exitCode);
+-void end_program(int exitCode, const char *fmt, ...);
+-void update_transfer_totals(const Job *job,
+-                            IoDirection_t ioDirection);
+-void run_statistics(unsigned int iterations);
+-
+-
+-//////////////////////////////////////////////////////////////////////////////
+-//////////////////////  Function Definitions  ////////////////////////////////
+-//////////////////////////////////////////////////////////////////////////////
+-
+-////////////////////////  error_msg()  ///////////////////////////////////////
+-void error_msg(const char *fmt, ...)
+-{
+-   fprintf(stderr, &quot;%s: &quot;, gPrgName);
+-   va_list ap;
+-   va_start(ap, fmt);
+-   vfprintf(stderr, fmt, ap);
+-   va_end(ap);
+-   fflush(stderr);
+-}
+-
+-
+-/////////////////////////  note()  ///////////////////////////////////////////
+-void note(const char *fmt, ...)
+-{
+-   va_list ap;
+-   va_start(ap, fmt);
+-   vfprintf(stdout, fmt, ap);
+-   va_end(ap);
+-   fflush(stdout);
+-}
+-
+-
+-//////////////////////////  version()  ///////////////////////////////////////
+-void version()
+-{
+-   note(&quot;%s %s\n&quot;, CANONICAL_PROG_NAME, PROG_VERSION);
+-   note(&quot;Copyright 2007 Hewlett-Packard Corp.\n&quot;);
+-   note(&quot;Written by Andrew Patterson &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/spew-changes">andrew.patterson at hp.com</A>&gt;\n&quot;);
+-}
+-
+-
+-//////////////////////////  help()  //////////////////////////////////////////
+-void help(poptContext &amp;context)
+-{
+-   poptSetOtherOptionHelp(context, &quot;--write|--read|--read-after-write [OPTION]... TRANSFER_SIZE[kKmMgG] FILE\n&quot;
+-&quot;An I/O performance measurement and load generation tool. Writes and/or \n&quot;
+-&quot;reads generated data to or from a character device, block device, or \n&quot;
+-&quot;regular file.\n&quot;);
+-
+-   poptPrintHelp(context, stdout, 0);
+-
+-   char fmtStr[] = 
+-&quot;\n&quot;
+-&quot;  FILE                              Regular or device file to write data to.\n&quot;
+-&quot;  LOGFILE                           Path to a file used for logging.\n&quot;
+-&quot;  MAX_BUFFER_SIZE                   Minimum buffer size used in each \n&quot;
+-&quot;                                    read(2)/write(2) call (default is\n&quot;
+-&quot;                                    MIN_BUFFER_SIZE bytes).\n&quot;
+-&quot;                                    MAX_BUFFER_SIZE. Must be an even\n&quot;
+-&quot;                                    multiple of %llu bytes and can be\n&quot;
+-&quot;                                    specified in bytes,\n&quot;
+-&quot;                                    kibibytes(k), kilobytes(K),\n&quot;
+-&quot;                                    mebibytes(m), megabytes(M),\n&quot;
+-&quot;                                    gibibytes(g), gigabytes(G).\n&quot;
+-&quot;                                    tebibytes(t), or terabytes(T).\n&quot;
+-&quot;                                    MAX_BUFFER_SIZE defaults to \n&quot;
+-&quot;                                    MIN_BUFFER_SIZE.  If MAX_BUFFER_SIZE &gt;\n&quot;
+-&quot;                                    MIN_BUFFER_SIZE, random buffers sizes\n&quot;
+-&quot;                                    between the two limits are used.\n&quot;
+-&quot;                                    MAX_BUFFER_SIZE must be an even\n&quot;
+-&quot;                                    multiple of MIN_BUFFER_SIZE.\n&quot;
+-&quot;  MIN_BUFFER_SIZE                   Minimum buffer size used in each \n&quot;
+-&quot;                                    read(2)/write(2) call (default is\n&quot;
+-&quot;                                    %llu bytes).\n&quot;
+-&quot;                                    MIN_BUFFER_SIZE. Must be an even\n&quot;
+-&quot;                                    multiple of %llu bytes and can be\n&quot;
+-&quot;                                    specified in bytes,\n&quot;
+-&quot;                                    kibibytes(k), kilobytes(K),\n&quot;
+-&quot;                                    mebibytes(m), megabytes(M),\n&quot;
+-&quot;                                    gibibytes(g), gigabytes(G).\n&quot;
+-&quot;                                    tebibytes(t), or terabytes(T).\n&quot;
+-&quot;  OFFSET                            Position to seek to in the file before\n&quot;
+-&quot;                                    starting I/O (default is 0). OFFSET\n&quot;
+-&quot;                                    must be an even multiple of %llu bytes\n&quot;
+-&quot;                                    and can be specified in bytes,\n&quot;
+-&quot;                                    kibibytes(k), kilobytes(K),\n&quot;
+-&quot;                                    mebibytes(m), megabytes(M),\n&quot;
+-&quot;                                    gibibytes(g), gigabytes(G).\n&quot;
+-&quot;                                    tebibytes(t), or terabytes(T).\n&quot;
+-&quot;  PATTERN                           Data pattern used when writing/reading\n&quot;
+-&quot;                                    data. Available patterns are: %s, \n&quot;
+-&quot;                                    %s, %s, %s, %s, %s, and \&quot;%s\&quot;\n&quot;
+-&quot;                                    (where \&quot;%s\&quot; is a number between 0-255). The\n&quot;
+-&quot;                                    default pattern is \&quot;%s\&quot;.\n&quot;
+-&quot;  RCFILE                            Read additional command-line options\n&quot;
+-&quot;                                    from RCFILE.  Other options on the\n&quot;
+-&quot;                                    command-line will override options in\n&quot;
+-&quot;                                    RCFILE.\n&quot;
+-&quot;  SEED                              Used to seed the random number generator\n&quot;
+-&quot;                                    Must be &gt;= 1 and &lt;= 2^32.\n&quot;
+-&quot;  TRANSFER_SIZE                     Total number of bytes to transfer (must\n&quot;
+-&quot;                                    be an even multiple of both\n&quot;
+-&quot;                                    MIN_BUFFER_SIZE and MAX_BUFFER)SIZE).\n&quot;
+-&quot;                                    TRANSFER_SIZE can be specified in\n&quot; 
+-&quot;                                    bytes, kilobytes, megabytes, or \n&quot;
+-&quot;                                    gigabytes.\n&quot;
+-&quot;  UNITS                             Kibibytes(k), kilobytes(K), \n&quot;
+-&quot;                                    mebibytes(m), megabytes(M),\n&quot; 
+-&quot;                                    gibibytes(g), gigabytes(G).\n&quot;
+-&quot;                                    tebibytes(t), or terabytes(T).\n&quot;
+-      &quot;&quot;;
+-
+-   char outStr[4096];
+-   snprintf(outStr, sizeof(outStr) - 1, fmtStr,
+-            Transfer::BUFFER_SIZE_INCREMENT,
+-            Transfer::BUFFER_SIZE_INCREMENT,
+-            Transfer::BUFFER_SIZE_INCREMENT,
+-            Transfer::OFFSET_INCREMENT,
+-            PATTERN_LOOKUP[Job::PATTERN_NONE],
+-            PATTERN_LOOKUP[Job::PATTERN_ZEROS],
+-            PATTERN_LOOKUP[Job::PATTERN_ONES],
+-            PATTERN_LOOKUP[Job::PATTERN_ALTERNATING],
+-            PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+-            PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
+-            PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+-            PATTERN_LOOKUP[Job::PATTERN_USER_DEFINED],
+-            PATTERN_LOOKUP[DEFAULT_PATTERN]);
+-   fprintf(stdout, outStr);
+-
+-   fprintf(stdout, &quot;\nReport bugs to Andrew Patterson &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/spew-changes">andrew.patterson at hp.com</A>&gt;.\n&quot;);
+-}
+-
+-
+-//////////////////////////  usage()  /////////////////////////////////////////
+-void usage(poptContext &amp;context)
+-{
+-   poptSetOtherOptionHelp(context, &quot;TRANSFER_SIZE[kKmMgG] FILE&quot;);
+-   poptPrintUsage(context, stdout, 0);
+-}
+-
+-
+-//////////////////////////  get_size()  //////////////////////////////////////
+-capacity_t get_size(const char *arg)
+-{
+-   char units;
+-   capacity_t size;
+-
+-   if (sscanf(arg, &quot;%llu%c&quot;, &amp;size, &amp;units) == 2)
+-   {
+-      switch (units)
+-      {
+-      case 'k':
+-      case 'K':
+-         size *= 1024LL;
+-         break;
+-      case 'm':
+-      case 'M':
+-         size *= 1024LL * 1024LL;
+-         break;
+-      case 'g':
+-      case 'G':
+-         size *= 1024LL * 1024LL * 1024LL;
+-         break;
+-      case 't':
+-      case 'T':
+-         size *= 1024LL * 1024LL * 1024LL * 102;
+-         break;
+-      default:
+-         error_msg(&quot;Invalid unit in argument \&quot;%s\&quot;\n&quot;, arg);
+-         exit(EXIT_ERROR_USAGE);
+-         break;
+-      }
+-   }
+-   else if (sscanf(arg, &quot;%llu&quot;, &amp;size) != 1)
+-   {
+-      error_msg(&quot;Could not parse size for argument \&quot;%s\&quot;.\n&quot;, arg);
+-      exit(EXIT_ERROR_USAGE);
+-   }
+-   return size;
+-}
+-
+-
+-//////////////////////////  get_units()  //////////////////////////////////////
+-Units_t get_units(const char *arg)
+-{
+-   char unitsCh;
+-   Units_t units;
+-
+-   if (sscanf(arg, &quot;%c&quot;, &amp;unitsCh) == 1)
+-   {
+-      switch (unitsCh)
+-      {
+-      case 'k':
+-         units = KIBIBYTES;
+-         break;
+-      case 'K':
+-         units = KILOBYTES;
+-         break;
+-      case 'm':
+-         units = MEBIBYTES;
+-         break;
+-      case 'M':
+-         units = MEGABYTES;
+-         break;
+-      case 'g':
+-         units = GIBIBYTES;
+-         break;
+-      case 'G':
+-         units = GIGABYTES;
+-         break;
+-      case 't':
+-         units = TEBIBYTES;
+-         break;
+-      case 'T':
+-         units = TERABYTES;
+-         break;
+-      default:
+-         error_msg(&quot;Invalid unit in argument \&quot;%s\&quot; - use kKmMgG.\n&quot;, arg);
+-         exit(EXIT_ERROR_USAGE);
+-         break;
+-      }
+-   }
+-   else
+-   {
+-      error_msg(&quot;Could not parse units in argument \&quot;%s\&quot;\n&quot;, arg);
+-      exit(EXIT_ERROR_USAGE);
+-   }
+-   return units;
+-}
+-
+-
+-//////////////////////////  parse_rcfile()  ///////////////////////////////////
+-bool parse_rcfile(FILE *rcfile,
+-                  string&amp; cmdArgs)
+-{
+-   char rcArgs[MAX_TMP_STR_LEN];
+-   int len;
+-   while (fgets(rcArgs, MAX_TMP_STR_LEN, rcfile) != (char *)NULL)
+-   {
+-      // Chop off string after comment character.
+-      char *commentStart = strchr(rcArgs, '#');
+-      if (commentStart)
+-         *commentStart = '\0';
+-      len = strlen(rcArgs);
+-      if (rcArgs[len - 1] == '\n')
+-         rcArgs[len - 1] = '\0';
+-      if (rcArgs[0] != '\0')
+-      {
+-         cmdArgs += rcArgs;
+-         cmdArgs += &quot; &quot;;
+-      }
+-   }
+-   return true;
+-}
+-
+-
+-//////////////////////////  read_rcfiles()  ///////////////////////////////////
+-bool read_rcfiles(int argc, const char **argv, string&amp; cmdArgs)
+-{
+-   struct stat statbuf;
+-   string rcFilePath;
+-   vector&lt;string&gt; rcFilePaths;
+-
+-
+-   // Check command-line for --no-rcfiles option.
+-   for (int i = 0; i &lt; argc; i++)
+-   {
+-      if (strncmp(argv[i], &quot;--no-rcfiles&quot;, strlen(&quot;--no-rcfiles&quot;)) == 0)
+-      {
+-         gUseStdRcFiles = false;
+-         break;
+-      }
+-   }
+-
+-   // Read standard config locations.
+-   if (gUseStdRcFiles)
+-   {
+-      // Read system-wide rcfile if it exists.
+-      rcFilePath = QUOTE(SYSCONFDIR);
+-      rcFilePath += &quot;/&quot;;
+-      rcFilePath += SYSTEM_SPEWRC_FILENAME;
+-      if (stat(rcFilePath.c_str(), &amp;statbuf) &gt;= 0)
+-      {
+-         rcFilePaths.push_back(rcFilePath);
+-      }
+-      else
+-      {
+-         if (errno != ENOENT)
+-         {
+-            error_msg(&quot;Cannot access rc file \&quot;%s\&quot; -- %s.\n&quot;, 
+-                      rcFilePath.c_str(), strError(errno).c_str());
+-         }
+-      }
+-
+-      rcFilePath = &quot;&quot;;
+-      if (getenv(SPEWRC_ENV))
+-      {
+-         rcFilePath = getenv(SPEWRC_ENV);
+-      }
+-      else
+-      {
+-         char *home = getenv(&quot;HOME&quot;);
+-         if (home)
+-         {
+-            rcFilePath = home;
+-            rcFilePath += &quot;/&quot;;
+-            rcFilePath += DEFAULT_SPEWRC_FILENAME;
+-         }
+-      }
+-      if (stat(rcFilePath.c_str(), &amp;statbuf) &gt;= 0)
+-      {
+-         rcFilePaths.push_back(rcFilePath);
+-      }
+-      else
+-      {
+-         if (errno != ENOENT)
+-         {
+-            error_msg(&quot;Cannot access rc file \&quot;%s\&quot; -- %s.\n&quot;, 
+-                      rcFilePath.c_str(), strError(errno).c_str());
+-         }
+-      }
+-   }
+-
+-   // Check the command-line for --rcfile.
+-   for (int i = 1; i &lt; argc; i++)
+-   {
+-      rcFilePath = &quot;&quot;;
+-      if (strncmp(argv[i], &quot;--rcfile&quot;, 8) == 0)
+-      {
+-         const char *eqPos = strrchr(argv[i], '=');
+-         if (eqPos == (char *)NULL)
+-         {
+-            if (i + 1 &lt; argc)
+-            {
+-               rcFilePath = argv[i+1];
+-            }
+-            else
+-            {
+-               error_msg(&quot;Missing RCFILE argument.\n&quot;);
+-               return false;
+-            }
+-         }
+-         else
+-         {
+-            rcFilePath = eqPos + 1;
+-         }
+-         if (stat(rcFilePath.c_str(), &amp;statbuf) &lt; 0)
+-         {
+-            error_msg(&quot;Cannot access RCFILE \&quot;%s\&quot; -- %s.\n&quot;, 
+-                      rcFilePath.c_str(), strError(errno).c_str());
+-            return false;
+-         }
+-         else
+-            rcFilePaths.push_back(rcFilePath);
+-         break;
+-      }
+-   }
+-
+-   vector&lt;string&gt;::iterator pathIter;
+-   for (pathIter = rcFilePaths.begin();
+-        pathIter != rcFilePaths.end();
+-        pathIter++)
+-   {
+-      FILE *rcfile = fopen(pathIter-&gt;c_str(), &quot;r&quot;);
+-      if (rcfile == (FILE *)NULL)
+-      {
+-         error_msg(&quot;Cannot open rc file \&quot;%s\&quot; -- %s.\n&quot;, 
+-                   pathIter-&gt;c_str(), strError(errno).c_str());
+-      }
+-      else
+-      {
+-         parse_rcfile(rcfile, cmdArgs);
+-         fclose(rcfile);
+-      }
+-   }
+-
+-   return true;
+-}
+-
+-
+-//////////////////////////  parse_options()  /////////////////////////////////
+-bool parse_options(int argc, const char **argv, string&amp; cmdArgs)
+-{
+-   char *minBufferSizeArgStr = (char *)NULL;
+-   char *maxBufferSizeArgStr = (char *)NULL;
+-   char *offsetArgStr = (char *)NULL;
+-   char *patternArgStr = (char *)NULL;
+-   char *unitsArgStr = (char *)NULL;
+-   char *logfilePathArgStr = (char *)NULL;
+-   char *dummyArgStr = (char *)NULL;
+-   int writeArg = 0;
+-   int readArg = 0;
+-   int readAfterWriteArg = 0;
+-   int seedArg = 0;
+-   int helpArg = 0;
+-   int usageArg = 0;
+-   int iterationsArg = -1;
+-   int noStatisticsArg = 0;
+-   int statisticsArg = 0;
+-   int detailedStatisticsArg = 0;
+-   int noProgressArg = 0;
+-   int progressArg = 0;
+-   int noTuiArg = 0;
+-   int tuiArg = 0;
+-   int syncArg = 0;
+-   int directArg = 0;
+-   int randomArg = 0;
+-   int generateLoadArg = 0;
+-   int useStdRcFilesArg = 1;
+-
+-   struct poptOption optionsTable[] =  {
+-      {&quot;max-buffer-size&quot;, 'B', POPT_ARG_STRING, &amp;maxBufferSizeArgStr, 0, &quot;Each read(2)/write(2) call uses a maximum buffer of size BUFFER_SIZE.&quot;, &quot;BUFFER_SIZE&quot;},
+-      {&quot;min-buffer-size&quot;, 'b', POPT_ARG_STRING, &amp;minBufferSizeArgStr, 0, &quot;Each read(2)/write(2) call uses a minimum buffer of size BUFFER_SIZE.&quot;, &quot;BUFFER_SIZE&quot;},
+-      {&quot;continue-after-error&quot;, 'c', POPT_ARG_NONE, &amp;gContinueAfterError, 0, &quot;Continue after data integrity errors.&quot;, NULL},
+-#ifdef HAVE_DIRECT_IO
+-      {&quot;direct&quot;, 'd', POPT_ARG_NONE, &amp;directArg, 0, &quot;Use direct I/O. Should only be used on block device files. Not all operating systems support direct I/O&quot;, NULL},
+-#endif
+-      {&quot;generate-load&quot;, 'g', POPT_ARG_NONE, &amp;generateLoadArg, 0, &quot;Equivalent to: -v -t -P -p random -i 0.&quot;,  NULL},
+-      {&quot;iterations&quot;, 'i', POPT_ARG_INT, &amp;iterationsArg, 0, &quot;Write/read data COUNT times. If count is 0, repeats forever.&quot;, &quot;COUNT&quot;},
+-      {&quot;logfile&quot;, 'l', POPT_ARG_STRING, &amp;logfilePathArgStr, 0, &quot;Send log messages to LOGFILE.&quot;, &quot;LOGFILE&quot;},
+-      {&quot;no-progress&quot;, 0, POPT_ARG_NONE, &amp;noProgressArg, 0, &quot;Don't show progress (default).&quot;, NULL},
+-      {&quot;no-rcfiles&quot;, 0, POPT_ARG_NONE, NULL, 0, &quot;Don't use standard rcfiles.&quot;, NULL},
+-      {&quot;no-statistics&quot;, 'q', POPT_ARG_NONE, &amp;noStatisticsArg, 0, &quot;Don't output statistics.&quot;, NULL},
+-      {&quot;no-tui&quot;, 0, POPT_ARG_NONE, &amp;noTuiArg, 0, &quot;Don't use TUI interface.&quot;, NULL},
+-      {&quot;offset&quot;, 'o', POPT_ARG_STRING, &amp;offsetArgStr, 0, &quot;Seek to OFFSET before starting I/O.&quot;, &quot;OFFSET&quot;},
+-      {&quot;progress&quot;, 'P', POPT_ARG_NONE, &amp;progressArg, 0, &quot;Show progress.&quot;, NULL},
+-      {&quot;pattern&quot;, 'p', POPT_ARG_STRING, &amp;patternArgStr, 0, &quot;Use data pattern PATTERN when reading or writing data.&quot;, &quot;PATTERN&quot;},
+-      {&quot;random&quot;, 'r', POPT_ARG_NONE, &amp;randomArg, 0, &quot;Read/Write buffers to random offsets.&quot;, NULL},
+-      {&quot;raw&quot;, 0, POPT_ARG_NONE, &amp;readAfterWriteArg, 0, &quot;An alias for --read-after-write.&quot;, NULL},
+-      {&quot;rcfile&quot;, 0, POPT_ARG_STRING, &amp;dummyArgStr, 0, &quot;Read command-line options from RCFILE.&quot;, &quot;RCFILE&quot;},
+-      {&quot;read&quot;, 0, POPT_ARG_NONE, &amp;readArg, 0, &quot;Read date from FILE.&quot;, NULL},
+-      {&quot;read-after-write&quot;, 0, POPT_ARG_NONE, &amp;readAfterWriteArg, 0, &quot;Read back data after writing to FILE.&quot;, NULL},
+-      {&quot;seed&quot;, 'S', POPT_ARG_INT, &amp;seedArg, 0, &quot;Use SEED for random number seed.&quot;,&quot;SEED&quot;},
+-      {&quot;sync&quot;, 's', POPT_ARG_NONE, &amp;syncArg, 0, &quot;Use synchronous I/O.&quot;, NULL},
+-      {&quot;statistics&quot;, 0, POPT_ARG_NONE, &amp;statisticsArg, 0, &quot;Output statistics (default).&quot;, NULL},
+-      {&quot;tui&quot;, 't', POPT_ARG_NONE, &amp;tuiArg, 0, &quot;Use curses-based, terminal user interface.&quot;, NULL},
+-      {&quot;units&quot;, 'u', POPT_ARG_STRING, &amp;unitsArgStr, 0, &quot;Show transfer rate in UNITS units.&quot;, &quot;UNITS&quot;},
+-      {&quot;usage&quot;, 0, POPT_ARG_NONE, &amp;usageArg, 0, &quot;Show brief usage message and exit.&quot;, NULL},
+-      {&quot;version&quot;, 'V', POPT_ARG_NONE, &amp;gGetVersion, 0, &quot;Output version information and exit.&quot;, NULL},
+-      {&quot;detailed-statistics&quot;, 'v', POPT_ARG_NONE, &amp;detailedStatisticsArg, 0, &quot;Output detailed statistics.&quot;, NULL},
+-      {&quot;write&quot;, 0, POPT_ARG_NONE, &amp;writeArg, 0, &quot;Write data to FILE.&quot;, NULL},
+-      {&quot;help&quot;, '?', POPT_ARG_NONE, &amp;helpArg, 0, &quot;Show this help and exit.&quot;, NULL},
+-      POPT_TABLEEND
+-   };
+-
+-   cmdArgs = &quot;&quot;;
+-   if (!read_rcfiles(argc, argv, cmdArgs))
+-       return false;
+-   for (int i = 1; i &lt; argc; i++)
+-   {
+-      cmdArgs += argv[i];
+-      cmdArgs += &quot; &quot;;
+-   }
+-   cmdArgs = &quot; &quot; + cmdArgs;
+-   cmdArgs = argv[0] + cmdArgs;
+-   int newArgc;
+-   const char **newArgv;
+-   poptParseArgvString((char *)cmdArgs.c_str(), &amp;newArgc, &amp;newArgv);
+-   poptContext context = poptGetContext(gPrgName,
+-                                        newArgc, 
+-                                        newArgv, 
+-                                        optionsTable, 
+-                                        POPT_CONTEXT_POSIXMEHARDER);
+-
+-   int rc = poptGetNextOpt(context);
+-   if (rc &lt; -1)
+-   {
+-      switch (rc)
+-      {
+-      case POPT_ERROR_BADOPT:
+-         error_msg(&quot;bad or unknown option \&quot;%s\&quot;\n.&quot;, 
+-                   poptBadOption(context, 0));
+-         break;
+-      default:
+-         error_msg(&quot;%s.\n&quot;, poptStrerror(rc));
+-         break;
+-      }
+-      usage(context);
+-      poptFreeContext(context);
+-      return false;
+-   }
+-
+-   // Help.
+-   if (helpArg)
+-   {
+-      help(context);
+-      poptFreeContext(context);
+-      return false;
+-   }
+-
+-   // Usage.
+-   if (usageArg)
+-   {
+-      usage(context);
+-      poptFreeContext(context);
+-      return false;
+-   }
+-
+-   // Version.
+-   if (gGetVersion)
+-   {
+-      poptFreeContext(context);
+-      return true;
+-   }
+-
+-   // Operation.
+-   if (writeArg + readArg + readAfterWriteArg &gt; 1)
+-   {
+-      error_msg(&quot;Only one operation (--write|--read|--read-after-write) allowed.\n&quot;);
+-      usage(context);
+-      poptFreeContext(context);
+-      return false;
+-   }
+-   if (writeArg)
+-      gOperation = OPERATION_WRITE;
+-   else if (readArg)
+-      gOperation = OPERATION_READ;
+-   else if (readAfterWriteArg)
+-      gOperation = OPERATION_READ_AFTER_WRITE;
+-
+-   // Min Buffer size.
+-   if (minBufferSizeArgStr)
+-   {
+-      gMinBufferSize = get_size(minBufferSizeArgStr);
+-   }
+-   // Max Buffer size.
+-   if (maxBufferSizeArgStr)
+-   {
+-      gMaxBufferSize = get_size(maxBufferSizeArgStr);
+-   }
+-   else
+-   {
+-      gMaxBufferSize = gMinBufferSize;
+-   }
+-
+-   // Offset.
+-   if (offsetArgStr)
+-   {
+-      gOffset = get_size(offsetArgStr);
+-   }
+-
+-   // Pattern.
+-   if (patternArgStr)
+-   {
+-      bool found = false;
+-      for (int pattern = (int)Job::PATTERN_NONE;
+-           PATTERN_LOOKUP[pattern] != (char *)NULL;
+-           pattern++)
+-      {
+-         if (strcmp(patternArgStr, PATTERN_LOOKUP[pattern]) == 0)
+-         {
+-            gPattern = (Job::pattern_t)pattern;
+-            found = true;
+-            break;
+-         }
+-      }
+-      if (!found) // Check for user pattern.
+-      {
+-         long int userPattern;
+-         char *endPtr;
+-         errno = 0;
+-         userPattern = strtol(patternArgStr, &amp;endPtr, 0);
+-         if (errno == 0 &amp;&amp; 
+-             *endPtr == '\0' &amp;&amp; 
+-             userPattern &gt;= 0 &amp;&amp; 
+-             userPattern &lt;= 255)
+-         {
+-            found = true;
+-            gPattern = Job::PATTERN_USER_DEFINED;
+-            gUserPattern = (unsigned char)userPattern;
+-         }
+-      }
+-      if (!found)
+-      {
+-         error_msg(&quot;\&quot;%s\&quot; is not a valid pattern. Use none, zeros, ones, alt, numbers, random or # (where # is any number between 0-255).\n&quot;, patternArgStr);
+-         usage(context);
+-         poptFreeContext(context);
+-         return false;
+-      }
+-   }  
+-
+-   // Units.
+-   if (unitsArgStr)
+-   {
+-      gUnits = get_units(unitsArgStr);
+-   }
+-
+-   // Logfile.
+-   if (logfilePathArgStr)
+-   {
+-      gLogfilePath = logfilePathArgStr;
+-   }
+-   
+-   // Verbosity.
+-   if (noStatisticsArg)
+-      gVerbosity = VERBOSITY_NONE;
+-   if (statisticsArg)
+-      gVerbosity = VERBOSITY_SHORT;
+-   if (detailedStatisticsArg)
+-      gVerbosity = VERBOSITY_LONG;
+-   
+-   // Sync, direct I/O, and random seek.
+-   if (syncArg)
+-      gIOMethod = Job::SYNCH_IO;
+-   if (directArg)
+-      gIOMethod = Job::DIRECT_IO;
+-   if (randomArg)
+-      gFillMethod = TransferInfoList::RANDOM_FILL;
+-
+-   // Progress.
+-   if (noProgressArg)
+-      gProgress = false;
+-   if (progressArg)
+-      gProgress = true;
+-
+-   // Iterations.
+-   if (iterationsArg &gt;= 0)
+-      gIterationsToDo = iterationsArg;
+-
+-   // Seed.
+-   if (seedArg &gt;= 0)
+-      gSeed = (u32_t)seedArg;
+-
+-   // TUI.
+-   if (noTuiArg)
+-      gUseTui = false;
+-   if (tuiArg)
+-      gUseTui = true;
+-
+-   // Generate load -v -t -P -p random -i 0, above options will override 
+-   // these.
+-   if (generateLoadArg)
+-   {
+-      if (!noProgressArg)
+-         gProgress = true;
+-      if (!noStatisticsArg &amp;&amp; !statisticsArg)
+-         gVerbosity = VERBOSITY_LONG;
+-      if (!noTuiArg)
+-         gUseTui = true;
+-      if (!patternArgStr)
+-         gPattern = Job::PATTERN_RANDOM;
+-      if (iterationsArg &lt; 0)
+-         gIterationsToDo = 0;
+-   }
+-   if (gIterationsToDo &lt; 0)
+-      gIterationsToDo = DEFAULT_ITERATIONS;
+-
+-   // Count the rest of the arguments.
+-   const char **argsLeft = poptGetArgs(context);
+-   int argsCount = 0;
+-   if (argsLeft)
+-   {
+-      while (argsLeft[argsCount] != NULL)
+-         argsCount++;
+-   }
+-   if (argsCount &lt; 2)
+-   {
+-      error_msg(&quot;Need TRANSFER_SIZE and FILE.\n&quot;);
+-      usage(context);
+-      poptFreeContext(context);
+-      return false;
+-   }
+-
+-   gTransferSize = get_size(poptGetArg(context));
+-   gFile = poptGetArg(context);
+-
+-   if (gSeed == DEFAULT_SEED)
+-   {
+-      gSeed = Random().getRandom32();
+-      gJobId = 0;
+-   }
+-   else
+-   {
+-      gJobId = gSeed;
+-   }
+-
+-   poptFreeContext(context);
+-   return true;
+-}
+-
+-
+-/////////////////////////  validate_options()  ////////////////////////////////
+-bool validate_options()
+-{
+-   if (gGetVersion)
+-      return true;
+-
+-   if (gOperation == OPERATION_NONE)
+-   {
+-      error_msg(&quot;Must specify an operation (--write|--read|--read-after-write).\n&quot;);
+-      return false;
+-   }
+-
+-   if (gMinBufferSize &gt; gMaxBufferSize)
+-   {
+-      error_msg(&quot;Minimum buffer size must be &lt;= maximum buffer size.\n&quot;);
+-      return false;
+-   }
+-   if (gMaxBufferSize % gMinBufferSize != 0)
+-   {
+-      error_msg(&quot;Maximum buffer size must be an even multiple of minimum buffer size.\n&quot;);
+-      return false;
+-   }
+-   if (gMinBufferSize % Transfer::BUFFER_SIZE_INCREMENT != 0)
+-   {
+-      error_msg(&quot;Minimum buffer size must be an even multiple of %llu bytes.\n&quot;,  Transfer::BUFFER_SIZE_INCREMENT);
+-      return false;
+-   }
+-   if (gMaxBufferSize % Transfer::BUFFER_SIZE_INCREMENT != 0)
+-   {
+-      error_msg(&quot;Maximum buffer size must be an even multiple of %llu bytes.\n&quot;, Transfer::BUFFER_SIZE_INCREMENT);
+-      return false;
+-   }
+-   if (gTransferSize &lt; gMinBufferSize)
+-   {
+-      error_msg(&quot;TRANSFER_SIZE must be &gt;= MIN_BUFFER_SIZE.\n&quot;);
+-      return false;
+-   }
+-   if (gTransferSize &lt; gMaxBufferSize)
+-   {
+-      error_msg(&quot;TRANSFER_SIZE must be &gt;= MAX_BUFFER_SIZE.\n&quot;);
+-      return false;
+-   }
+-   if (gTransferSize % gMinBufferSize != 0)
+-   {
+-      error_msg(&quot;TRANSFER_SIZE must be an even multiple of MIN_BUFFER_SIZE.\n&quot;);
+-      return false;
+-   }
+-   if (gTransferSize % gMaxBufferSize != 0)
+-   {
+-      error_msg(&quot;TRANSFER_SIZE must be an even multiple of MAX_BUFFER_SIZE.\n&quot;);
+-      return false;
+-   }
+-
+-
+-#ifdef HAVE_DIRECT_IO
+-   if (gIOMethod == Job::DIRECT_IO)
+-   {
+-      if (gMinBufferSize % Transfer::DIRECTIO_BUFFER_SIZE_INCREMENT != 0)
+-      {
+-         error_msg(&quot;MIN_BUFFER_SIZE must be a multiple of %llu bytes when using direct I/O. Use -b|--min-buffer-size to set MIN_BUFFER_SIZE.\n&quot;, Transfer::DIRECTIO_BUFFER_SIZE_INCREMENT);
+-         return false;
+-      }
+-      if (gMaxBufferSize % Transfer::DIRECTIO_BUFFER_SIZE_INCREMENT != 0)
+-      {
+-         error_msg(&quot;MAX_BUFFER_SIZE must be a multiple of %llu bytes when using direct I/O. Use -B|--max-buffer-size to set MAX_BUFFER_SIZE.\n&quot;, Transfer::DIRECTIO_BUFFER_SIZE_INCREMENT);
+-         return false;
+-      }
+-   }
+-#endif
+-
+-#ifdef HAVE_MOUNT_CHECK
+-   if (is_mounted(gFile.c_str()))
+-   {
+-      error_msg(&quot;Cannot use a mounted device for FILE.\n&quot;);
+-      return false;
+-   }
+-#endif // HAVE_MOUNT_CHECK
+-
+-   return true;
+-}
+-
+-
+-//////////////////////////  end_program()  ////////////////////////////////////
+-void end_program(int exitCode)
+-{
+-   end_program(exitCode, &quot;&quot;);
+-}
+-
+-
+-//////////////////////////  end_program()  ////////////////////////////////////
+-void end_program(int exitCode, const char *fmt, ...)
+-{
+-   char msg[MAX_TMP_STR_LEN];
+-
+-   if (gDisplay)
+-      gDisplay-&gt;close();
+-   
+-   va_list ap;
+-   va_start(ap, fmt);
+-   vsnprintf(msg, MAX_TMP_STR_LEN, fmt, ap);
+-   va_end(ap);
+-
+-   if (strlen(msg) &gt; 0)
+-   {
+-      if (gLogger)
+-         gLogger-&gt;logError(msg);
+-      error_msg(msg);
+-   }
+-
+-   if (gLogger)
+-   {
+-      if (exitCode == EXIT_OK)
+-         run_statistics(gCurrentIteration);
+-      if (gFoundTransferErrors &gt; 0)
+-      {
+-         if (gLogfilePath.length() &gt; 0)
+-         {
+-            gLogger-&gt;showError(&quot;One or more data integrity or I/O errors were encountered during data\ntransfers.  Descriptions of these errors can be found in the logfile\n%s.\n&quot;, gLogfilePath.c_str());
+-         }
+-         else
+-         {
+-            gLogger-&gt;showError(&quot;One or more data integrity or I/O errors were encountered during data\ntransfers.  Descriptions of these types of errors are output to a log file if\nthe -l|--logfile option is used.\n&quot;);
+-         }
+-      }
+-      gLogger-&gt;logFinish();
+-      gLogger-&gt;close();
+-   }
+-
+-   exit(exitCode);
+-}
+-
+-
+-//////////////////////////  cleanup()  ///////////////////////////////////////
+-void cleanup(int signal)
+-{
+-   if (signal == SIGQUIT || signal == SIGINT)
+-      end_program(EXIT_OK);
+-   else
+-      end_program(EXIT_ERROR_CAUGHT_EXCEPTION, 
+-                  &quot;Caught signal \&quot;%s\&quot;, exiting.\n&quot;, strSignal(signal).c_str());
+-}
+-
+-
+-//////////////////////////  resize()  /////////////////////////////////////////
+-void resize(int sig)
+-{
+-   static int working = 0;  // Latch for repeated interrupts.
+-
+-   if (!working++)
+-   {
+-      if (gDisplay)
+-         gDisplay-&gt;resize();
+-   }
+-   working--;
+-}
+-
+-
+-//////////////////////////  update_job_times()  //////////////////////////////
+-void update_transfer_totals(const Job *job,
+-                            IoDirection_t ioDirection)
+-{
+-   switch (ioDirection)
+-   {
+-   case READING:
+-      gTotalBytesRead += job-&gt;getBytesTransferred();
+-      gTotalReadTransferTime += job-&gt;getTransferEndTime() - job-&gt;getTransferStartTime(); 
+-      break;
+-   case WRITING:
+-      gTotalBytesWritten += job-&gt;getBytesTransferred();
+-      gTotalWriteTransferTime += job-&gt;getTransferEndTime() - job-&gt;getTransferStartTime(); 
+-      break;
+-   }
+-}
+-
+-
+-//////////////////////////  intermediate_statistics() /////////////////////////
+-void intermediate_statistics(const Job *job, 
+-                             IoDirection_t ioDirection)
+-{
+-   TimeHack currentTime(TimeHack::getCurrentTime());
+-
+-   gDisplay-&gt;intermediateStatistics(job-&gt;getHackBytesTransferred(),
+-                                    job-&gt;getHackEndTime() - job-&gt;getHackStartTime(),
+-                                    job-&gt;getJobBytesTransferred(),
+-                                    currentTime - job-&gt;getJobStartTime(),
+-                                    job-&gt;getTransferSize(),
+-                                    gTotalBytesRead,
+-                                    gTotalReadTransferTime.getTime(),
+-                                    gTotalBytesWritten,
+-                                    gTotalWriteTransferTime.getTime(), 
+-                                    currentTime - gProgramStartTime);
+-}
+-
+-
+-//////////////////////////  cumulative_statistics()  //////////////////////////
+-void cumulative_statistics(const Job *job, 
+-                           unsigned int iteration,
+-                           IoDirection_t ioDirection)
+-{
+-   TimeHack now(TimeHack::getCurrentTime());
+-   TimeHack jobTransferTime(job-&gt;getJobEndTime() - job-&gt;getJobStartTime());
+-
+-
+-   gDisplay-&gt;cumulativeStatistics(job-&gt;getJobBytesTransferred(), 
+-                                  jobTransferTime.getTime(),
+-                                  job-&gt;getTotalNumberOfTransfers(),
+-                                  gTotalBytesRead,
+-                                  gTotalReadTransferTime.getTime(),
+-                                  gTotalReadOps,
+-                                  gTotalBytesWritten,
+-                                  gTotalWriteTransferTime.getTime(), 
+-                                  gTotalWriteOps,
+-                                  now - gProgramStartTime);
+-
+-   long double transferRate = convertCapacity((long double)job-&gt;getJobBytesTransferred(), gUnits)/jobTransferTime.getTime();
+-   long double iops = (long double)job-&gt;getTotalNumberOfTransfers()/(long double)jobTransferTime.getTime();
+-
+-   switch (ioDirection)
+-   {
+-   case READING:
+-      gLogger-&gt;logNote(&quot;Iter: %5d   RTR: %11.2Lf %-5s   TT: %s   IOPS: %11.2Lf\n&quot;,
+-                       iteration,
+-                       transferRate, 
+-                       getTransferRateUnitsStr(gUnits), 
+-                       jobTransferTime.getElapsedTimeStr().c_str(),
+-                       iops);
+-      break;
+-   case WRITING:
+-      gLogger-&gt;logNote(&quot;Iter: %5d   WTR: %11.2Lf %-5s   TT: %s   IOPS: %11.2Lf\n&quot;,
+-                       iteration,
+-                       transferRate, 
+-                       getTransferRateUnitsStr(gUnits), 
+-                       jobTransferTime.getElapsedTimeStr().c_str(),
+-                       iops);
+-      break;
+-   }  
+-}
+-
+-
+-//////////////////////////  run_statistics()  ////////////////////////////////
+-void run_statistics(unsigned int iterations)
+-{
+-   unsigned int device;
+-   device = Log::OUTPUT_LOG_STDOUT;
+-   if (gVerbosity == VERBOSITY_LONG)
+-      device |= Log::OUTPUT_DISPLAY_STDOUT;
+-
+-   TimeHack now(TimeHack::getCurrentTime());
+-
+-   if (!gUseTui)
+-      gLogger-&gt;note(device, &quot;\n&quot;);
+-   gLogger-&gt;note(device, &quot;Total iterations:                %17u\n&quot;,
+-                 iterations);
+-   gLogger-&gt;note(device, &quot;Total runtime:                   %17s\n&quot;,
+-                 gProgramStartTime.getTimeDiffStr(now).c_str());
+-
+-   if (gTotalBytesWritten &gt; 0)
+-   {
+-      long double writeTransferRate = convertCapacity((long double)gTotalBytesWritten, gUnits)/(long double)gTotalWriteTransferTime.getTime();
+-      long double writeIops = (long double)gTotalWriteOps/(long double)gTotalWriteTransferTime.getTime();
+-      gLogger-&gt;note(device, &quot;Total write transfer time (WTT): %17s\n&quot;, 
+-                    gTotalWriteTransferTime.getElapsedTimeStr().c_str());
+-      gLogger-&gt;note(device, &quot;Total write transfer rate (WTR): %11.2Lf %-5s\n&quot;,
+-                    writeTransferRate, getTransferRateUnitsStr(gUnits));
+-      gLogger-&gt;note(device, &quot;Total write IOPS:                %11.2Lf IOPS\n&quot;, writeIops);
+-                    
+-   }
+-   if (gTotalBytesRead &gt; 0)
+-      
+-   {
+-      long double readTransferRate = convertCapacity((long double)gTotalBytesRead, gUnits)/(long double)gTotalReadTransferTime.getTime();
+-      long double readIops = (long double)gTotalReadOps/(long double)gTotalReadTransferTime.getTime();
+-      gLogger-&gt;note(device, &quot;Total read transfer time (RTT):  %17s\n&quot;, 
+-                    gTotalReadTransferTime.getElapsedTimeStr().c_str());
+-      gLogger-&gt;note(device, &quot;Total read transfer rate (RTR):  %11.2Lf %-5s\n&quot;,
+-                    readTransferRate, getTransferRateUnitsStr(gUnits));
+-      gLogger-&gt;note(device, &quot;Total read IOPS:                 %11.2Lf IOPS\n&quot;, readIops);
+-   }
+-}
+-
+-
+-//////////////////////////  do_job()  /////////////////////////////////////////
+-void do_job(Job *job, unsigned int iteration, IoDirection_t ioDirection)
+-{
+-   int ret;
+-   capacity_t startingVerticalHacks = gDisplay-&gt;getCurrentNumVerticalHacks();
+-   capacity_t startingHorizontalHacks = gDisplay-&gt;getCurrentNumHorizontalHacks();
+-   capacity_t totalTransfers = job-&gt;getTotalNumberOfTransfers();
+-   capacity_t transferSize = job-&gt;getTransferSize();
+-   TimeHack savedTotalWriteTransferTime(gTotalWriteTransferTime);
+-   TimeHack savedTotalReadTransferTime(gTotalReadTransferTime);
+-
+-   if (gProgress || gUseTui)
+-   {
+-      capacity_t transfersPerVerticalHack = (capacity_t)((double)totalTransfers/(double)startingVerticalHacks);
+-      capacity_t verticalHacks = startingVerticalHacks;
+-      if (transfersPerVerticalHack &lt; 1LLU)
+-      {
+-         transfersPerVerticalHack = 1LLU;
+-         verticalHacks = totalTransfers;
+-      }
+-
+-      capacity_t transfersPerHorizontalHack = (capacity_t)((double)transfersPerVerticalHack/(double)startingHorizontalHacks);
+-      capacity_t horizontalHacks = startingHorizontalHacks;
+-      if (transfersPerHorizontalHack &lt;= 1LLU)
+-      {
+-         transfersPerHorizontalHack = 1LLU;
+-         if (transfersPerVerticalHack &gt; startingHorizontalHacks)
+-            horizontalHacks = startingHorizontalHacks;
+-         else
+-            horizontalHacks = transfersPerVerticalHack;
+-      }
+-         
+-      capacity_t bufferSize = job-&gt;getBufferSize();
+-      capacity_t remainingTransfers;
+-
+-      gDisplay-&gt;startJob(iteration, ioDirection);
+-      ret = job-&gt;startJob();
+-      if (ret != EXIT_OK)
+-      {
+-         end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-      }
+-      for (capacity_t i = 1LLU; i &lt;= verticalHacks - 1; i++)
+-      {
+-         // Run transfers for horizontal hacks.
+-         job-&gt;startHack();
+-         for (capacity_t j = 1LLU; j &lt;= horizontalHacks - 1; j++)
+-         {
+-            ret = job-&gt;runTransfers(transfersPerHorizontalHack,
+-                                    gContinueAfterError);
+-            update_transfer_totals(job, ioDirection);
+-            if (ret != EXIT_OK)
+-            {
+-               gFoundTransferErrors++;
+-               gDisplay-&gt;errorHack();
+-               if (gContinueAfterError)
+-               {
+-                  gLogger-&gt;logError(&quot;%s\n&quot;, 
+-                                    job-&gt;getLastErrorMessage().c_str());
+-               }
+-               else
+-               {
+-                  end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-               }
+-            }
+-            else
+-            {
+-               gDisplay-&gt;hack();
+-            }
+-         }
+-            
+-         // Finish remaining transfers for last horizontal hack.
+-         remainingTransfers = transfersPerVerticalHack - (transfersPerHorizontalHack * (horizontalHacks - 1));
+-         ret = job-&gt;runTransfers(remainingTransfers, gContinueAfterError);
+-         update_transfer_totals(job, ioDirection);
+-         if (ret != EXIT_OK)
+-         {
+-            gFoundTransferErrors++;
+-            gDisplay-&gt;errorEndHack();
+-            if (gContinueAfterError)
+-            {
+-               gLogger-&gt;logError(&quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-            }
+-            else
+-            {
+-               gDisplay-&gt;nextHackRow();
+-               end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-            }
+-         }
+-         else
+-         {
+-            gDisplay-&gt;endHack();
+-         }
+-         job-&gt;endHack();
+-         for (capacity_t j = 0;
+-              j &lt; startingHorizontalHacks - horizontalHacks;
+-              j++)
+-         {
+-            gDisplay-&gt;noHack();
+-         }
+-         intermediate_statistics(job, ioDirection);
+-         gDisplay-&gt;nextHackRow();
+-      }
+-
+-      // Finish transfers for last vertical hack leftovers.
+-      remainingTransfers = (transferSize - job-&gt;getJobBytesTransferred())/bufferSize;
+-      if (remainingTransfers &gt; 0LLU)
+-      {
+-         job-&gt;startHack();
+-         transfersPerHorizontalHack = (capacity_t)((double)remainingTransfers/(double)startingHorizontalHacks);
+-         if (transfersPerHorizontalHack &lt;= 1)
+-         {
+-            transfersPerHorizontalHack = 1LLU;
+-            if (remainingTransfers &gt; startingHorizontalHacks)
+-               horizontalHacks = startingHorizontalHacks;
+-            else
+-               horizontalHacks = remainingTransfers;
+-         }
+-         for (capacity_t j = 1LLU; j &lt;= horizontalHacks - 1; j++)
+-         {
+-            ret = job-&gt;runTransfers(transfersPerHorizontalHack,
+-                                    gContinueAfterError);
+-            update_transfer_totals(job, ioDirection);
+-            if (ret != EXIT_OK)
+-            {
+-               gFoundTransferErrors++;
+-               gDisplay-&gt;errorHack();
+-               if (gContinueAfterError)
+-               {
+-                  gLogger-&gt;logError(&quot;%s\n&quot;, 
+-                                    job-&gt;getLastErrorMessage().c_str());
+-               }
+-               else
+-               {
+-                  gDisplay-&gt;nextHackRow();
+-                  end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-               }
+-            }
+-            else
+-            {
+-               gDisplay-&gt;hack();
+-            }
+-         }
+-         ret = job-&gt;runTransfers(remainingTransfers - (transfersPerHorizontalHack * (horizontalHacks - 1)), gContinueAfterError);
+-         update_transfer_totals(job, ioDirection);
+-         if (ret != EXIT_OK)
+-         {
+-            gFoundTransferErrors++;
+-            gDisplay-&gt;errorEndHack();
+-            if (gContinueAfterError)
+-            {
+-               gLogger-&gt;logError(&quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-            }
+-            else
+-            {
+-               gDisplay-&gt;nextHackRow();
+-               end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-            }
+-         }
+-         else
+-         {
+-            gDisplay-&gt;endHack();
+-         }
+-         job-&gt;endHack();
+-         for (capacity_t j = 0; 
+-              j &lt; startingHorizontalHacks - horizontalHacks;
+-              j++)
+-         {
+-            gDisplay-&gt;noHack();
+-         }
+-         intermediate_statistics(job, ioDirection);
+-         gDisplay-&gt;nextHackRow();
+-      }
+-      ret = job-&gt;finishJob();
+-      if (ret != EXIT_OK)
+-      {
+-         gLogger-&gt;showError(&quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-         exit(ret);
+-      }
+-   }
+-   else
+-   {
+-      gDisplay-&gt;startJob(iteration, ioDirection);
+-      ret = job-&gt;startJob();
+-      if (ret != EXIT_OK)
+-      {
+-         end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-         exit(ret);
+-      }
+-      ret = job-&gt;runTransfers(totalTransfers, gContinueAfterError);
+-      update_transfer_totals(job, ioDirection);
+-      if (ret != EXIT_OK)
+-      {
+-         gFoundTransferErrors++;
+-         if (gContinueAfterError)
+-         {
+-            gLogger-&gt;logError(&quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-         }
+-         else
+-         {
+-            end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-         }
+-      }
+-      ret = job-&gt;finishJob();
+-      if (ret != EXIT_OK)
+-      {
+-         end_program(ret, &quot;%s\n&quot;, job-&gt;getLastErrorMessage().c_str());
+-      }
+-   }
+-   // May get incremental time errors during transfers, so reset transfer 
+-   // totals to old value plus total job time.
+-   switch (ioDirection)
+-   {
+-   case READING:
+-      gTotalReadTransferTime = savedTotalReadTransferTime + job-&gt;getJobEndTime() - job-&gt;getJobStartTime();
+-      break;
+-   case WRITING:
+-      gTotalWriteTransferTime = savedTotalWriteTransferTime + job-&gt;getJobEndTime() - job-&gt;getJobStartTime();
+-      break;
+-   }
+-
+-   // Update IOPS.
+-   switch (ioDirection)
+-   {
+-   case READING:
+-      gTotalReadOps += job-&gt;getTotalNumberOfTransfers(); 
+-      break;
+-   case WRITING:
+-      gTotalWriteOps += job-&gt;getTotalNumberOfTransfers(); 
+-      break;
+-   }
+-
+-   cumulative_statistics(job, iteration, ioDirection);
+-   gDisplay-&gt;endJob();
+-}
+-
+-
+-//////////////////////////  run()  ////////////////////////////////////////////
+-void run(operation_enum operation)
+-{
+-   int ret;
+-
+-   gCurrentIteration = 0;
+-   do
+-   {
+-      gCurrentIteration++;
+-      if (operation == OPERATION_WRITE || 
+-          operation == OPERATION_READ_AFTER_WRITE)
+-      {
+-         Job *job = new WriteJob(*gLogger,
+-                                 gFile,
+-                                 gOffset,
+-                                 gTransferSize,
+-                                 gMinBufferSize,
+-                                 gMaxBufferSize,
+-                                 TransferInfoList::GEOMETRIC_PROGRESSION,
+-                                 gPattern,
+-                                 gUserPattern,
+-                                 gFillMethod,
+-                                 gIOMethod,
+-                                 gSeed,
+-                                 gJobId);
+-         if (job == (Job *)NULL)
+-         {
+-            gLogger-&gt;showError(&quot;Could not allocate memory.&quot;);
+-            exit(EXIT_ERROR_MEMORY_ALLOC);
+-         }
+-         if ((ret = job-&gt;init()) != EXIT_OK)
+-         {
+-            gLogger-&gt;showError(&quot;Could not initialize job.\n&quot;);
+-            exit(ret);
+-         }
+-         
+-         do_job(job, gCurrentIteration, WRITING);
+-         delete job;
+-         
+-         if (gIterationsToDo == 0 || 
+-             gCurrentIteration &lt; gIterationsToDo ||
+-             gCurrentIteration == gIterationsToDo &amp;&amp; 
+-             operation == OPERATION_READ_AFTER_WRITE)
+-         {
+-            gDisplay-&gt;nextJob();
+-         }
+-      }
+-
+-      if (operation == OPERATION_READ || 
+-          operation == OPERATION_READ_AFTER_WRITE)
+-      {
+-         Job *job = new ReadJob(*gLogger,
+-                                gFile,
+-                                gOffset,
+-                                gTransferSize,
+-                                gMinBufferSize,
+-                                gMaxBufferSize,
+-                                TransferInfoList::GEOMETRIC_PROGRESSION,
+-                                gPattern,
+-                                gUserPattern,
+-                                gFillMethod,
+-                                gIOMethod,
+-                                gSeed,
+-                                gJobId);
+-         if (job == (Job *)NULL)
+-         {
+-            gLogger-&gt;showError(&quot;Could not allocate memory.&quot;);
+-            exit(EXIT_ERROR_MEMORY_ALLOC);
+-         }
+-         if ((ret = job-&gt;init()) != EXIT_OK)
+-         {
+-            gLogger-&gt;showError(&quot;Could not initialize job.\n&quot;);
+-            exit(ret);
+-         }
+-
+-         do_job(job, gCurrentIteration, READING);
+-         delete job;
+-
+-         if (gIterationsToDo == 0 || gCurrentIteration &lt; gIterationsToDo)
+-         {
+-            gDisplay-&gt;nextJob();
+-         }
+-      }
+-
+-   } while (gIterationsToDo == 0LLU || gCurrentIteration &lt; gIterationsToDo);
+-}
+-
+-
+-//////////////////////////  main()  ///////////////////////////////////////////
+-int main(int argc, char *argv[])
+-{
+-   int rtn;
+-
+-   // Process command-line options.
+-   gPrgName = argv[0];
+-   const char *prgBasename = basename(gPrgName);
+-   string cmdArgs;
+-   
+-   for (int i = 1; PROG_NAME_LOOKUP[i] != (char *)NULL; i++)
+-   {
+-      if (strcmp(prgBasename, PROG_NAME_LOOKUP[i]) == 0)
+-      {
+-         gOperation = (operation_enum)i;
+-         break;
+-      }
+-   }
+-
+-   if (!parse_options(argc, (const char **)argv, cmdArgs))
+-   {
+-      exit(EXIT_ERROR_USAGE);
+-   }
+-   if (!validate_options())
+-      exit(EXIT_ERROR_USAGE);
+-
+-   if (gGetVersion)
+-   {
+-      version();
+-      exit(0);
+-   }
+-
+-   gLogger = new Log(gLogfilePath);
+-   if (gLogger == (Log *)NULL)
+-   {
+-      end_program(EXIT_ERROR_MEMORY_ALLOC, &quot;Out of memory.\n&quot;);
+-   }
+-   if ((rtn = gLogger-&gt;open()) != EXIT_OK)
+-   {
+-      end_program(rtn, &quot;Could not open logfile \&quot;%s\&quot; -- %s\n&quot;,
+-                  gLogfilePath.c_str(), strError(rtn).c_str());
+-   }
+-
+-   signal(SIGQUIT, cleanup);
+-   signal(SIGTERM, cleanup);
+-   signal(SIGINT, cleanup);
+-   signal(SIGWINCH, resize);
+-
+-   if (gUseTui)
+-      gDisplay = new SpewTui(gIterationsToDo, gUnits, gProgress, gVerbosity);
+-   else
+-      gDisplay = new SpewConsole(gIterationsToDo, gUnits, gProgress, gVerbosity);
+-
+-   if (gDisplay == (SpewDisplay *)NULL)
+-      end_program(EXIT_ERROR_MEMORY_ALLOC, &quot;Out of memory.\n&quot;);
+-   if ((rtn = gDisplay-&gt;init()) != EXIT_OK)
+-      end_program(rtn, &quot;Could not initialize display.\n&quot;);
+-
+-   gDisplay-&gt;setCurrentUnits(gUnits);
+-   gProgramStartTime = TimeHack::getCurrentTime();
+-   gLogger-&gt;logStart();
+-   gLogger-&gt;logCmdLine(cmdArgs.c_str());
+-   gLogger-&gt;logNote(&quot;\n&quot;);
+-   gDisplay-&gt;startRun();
+-
+-   try 
+-   {
+-      run(gOperation);
+-   } catch(...)
+-   {
+-      gLogger-&gt;showError(&quot;Caught exception\n&quot;);
+-      exit(EXIT_ERROR_CAUGHT_EXCEPTION);
+-   }
+-   gDisplay-&gt;endRun();
+-   end_program(EXIT_OK);
+-
+-   return 0;
+-}
+-
+-
+-
+
+Copied: tags/1.0.8/src/spew.cpp (from rev 86, trunk/src/spew.cpp)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000037.html">[Spew-changes] r92 - tags
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

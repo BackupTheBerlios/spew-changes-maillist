@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r59 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-January/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r59%20-%20trunk/src&In-Reply-To=%3C200701210726.l0L7Qtkn025582%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000003.html">
+   <LINK REL="Next"  HREF="000005.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r59 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r59%20-%20trunk/src&In-Reply-To=%3C200701210726.l0L7Qtkn025582%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r59 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Sun Jan 21 08:26:55 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000003.html">[Spew-changes] r58 - trunk/src
+</A></li>
+        <LI>Next message: <A HREF="000005.html">[Spew-changes] r60 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-01-21 08:26:54 +0100 (Sun, 21 Jan 2007)
+New Revision: 59
+
+Modified:
+   trunk/src/GarbageTransfer.cpp
+   trunk/src/GarbageTransfer.h
+   trunk/src/NumbersTransfer.cpp
+   trunk/src/NumbersTransfer.h
+   trunk/src/RandomTransfer.cpp
+   trunk/src/RandomTransfer.h
+   trunk/src/ReadJob.cpp
+   trunk/src/Transfer.cpp
+   trunk/src/Transfer.h
+   trunk/src/TransferFactory.cpp
+   trunk/src/TransferFactory.h
+   trunk/src/WriteJob.cpp
+   trunk/src/ZerosTransfer.cpp
+   trunk/src/ZerosTransfer.h
+Log:
+Fixed a bug where not all data integrity errors were being logged (They were still
+being detected).
+Moved error logging from Transfer* classes to *Job classes, which allowed me to 
+pull the Logging instance from these classes.
+
+
+Modified: trunk/src/GarbageTransfer.cpp
+===================================================================
+--- trunk/src/GarbageTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/GarbageTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include &quot;GarbageTransfer.h&quot;
+ 
+ //////////////////////////  GarbageTransfer::GarbageTransfer()  ///////////////
+-GarbageTransfer::GarbageTransfer(Log &amp;logger,
+-                                 int fd, 
++GarbageTransfer::GarbageTransfer(int fd, 
+                                  unsigned char *buffer, 
+                                  capacity_t bufferSize,
+                                  capacity_t id) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+ }
+ 
+
+Modified: trunk/src/GarbageTransfer.h
+===================================================================
+--- trunk/src/GarbageTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/GarbageTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,15 +27,13 @@
+ 
+ #include &quot;common.h&quot;
+ #include &quot;Job.h&quot;
+-#include &quot;Log.h&quot;
+ #include &quot;Transfer.h&quot;
+ 
+ 
+ class GarbageTransfer: public Transfer
+ {
+ public:
+-   GarbageTransfer(Log &amp;logger,
+-                   int fd, 
++   GarbageTransfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t bufferSize,
+                    capacity_t id);
+
+Modified: trunk/src/NumbersTransfer.cpp
+===================================================================
+--- trunk/src/NumbersTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/NumbersTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include &quot;NumbersTransfer.h&quot;
+ 
+ //////////////////////////  NumbersTransfer::NumbersTransfer()  ///////////////
+-NumbersTransfer::NumbersTransfer(Log &amp;logger,
+-                                 int fd, 
++NumbersTransfer::NumbersTransfer(int fd, 
+                                  unsigned char *buffer, 
+                                  capacity_t bufferSize,
+                                  capacity_t id) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+ }
+ 
+
+Modified: trunk/src/NumbersTransfer.h
+===================================================================
+--- trunk/src/NumbersTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/NumbersTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,15 +27,13 @@
+ 
+ #include &quot;common.h&quot;
+ #include &quot;Job.h&quot;
+-#include &quot;Log.h&quot;
+ #include &quot;Transfer.h&quot;
+ 
+ 
+ class NumbersTransfer: public Transfer
+ {
+ public:
+-   NumbersTransfer(Log &amp;logger,
+-                   int fd, 
++   NumbersTransfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t bufferSize,
+                    capacity_t id);
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/RandomTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,13 +34,12 @@
+ #include &quot;RandomTransfer.h&quot;
+ 
+ //////////////////////////  RandomTransfer::RandomTransfer()  /////////////////
+-RandomTransfer::RandomTransfer(Log &amp;logger,
+-                               int fd, 
++RandomTransfer::RandomTransfer(int fd, 
+                                unsigned char *buffer, 
+                                capacity_t bufferSize,
+                                capacity_t id,
+                                u32_t seed) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+    mRnd.setSeed(seed);
+ }
+
+Modified: trunk/src/RandomTransfer.h
+===================================================================
+--- trunk/src/RandomTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/RandomTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,7 +27,6 @@
+ 
+ #include &quot;common.h&quot;
+ #include &quot;Job.h&quot;
+-#include &quot;Log.h&quot;
+ #include &quot;Transfer.h&quot;
+ #include &quot;Random.h&quot;
+ 
+@@ -35,8 +34,7 @@
+ class RandomTransfer: public Transfer
+ {
+ public:
+-   RandomTransfer(Log &amp;logger,
+-                  int fd, 
++   RandomTransfer(int fd, 
+                   unsigned char *buffer, 
+                   capacity_t bufferSize,
+                   capacity_t id,
+
+Modified: trunk/src/ReadJob.cpp
+===================================================================
+--- trunk/src/ReadJob.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ReadJob.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -98,8 +98,7 @@
+       return EXIT_ERROR_SYSTEM;
+    }
+ 
+-   mTransfer = TransferFactory::createInstance(mLogger,
+-                                               mPattern,
++   mTransfer = TransferFactory::createInstance(mPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+@@ -135,7 +134,8 @@
+ 
+    this-&gt;setTransferStartTime();
+    mBytesTransferred = 0;
+-   mNumTransfersWithDataIntegrityErrors =0;
++   mNumTransfersWithDataIntegrityErrors = 0;
++   mLastErrorMsg = &quot;&quot;;
+    int exitCode = EXIT_OK;
+    for (capacity_t i = 0LLU; i &lt; numTransfers; i++)
+    {
+@@ -163,6 +163,8 @@
+          exitCode = EXIT_ERROR_DATA_INTEGRITY;
+          if (continueAfterError)
+          {
++            mLogger.logNote(mLastErrorMsg.c_str());
++            mLastErrorMsg = &quot;&quot;;
+             mNumTransfersWithDataIntegrityErrors++;
+          }
+          else
+
+Modified: trunk/src/Transfer.cpp
+===================================================================
+--- trunk/src/Transfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/Transfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,10 @@
+ #include &quot;Transfer.h&quot;
+ 
+ //////////////////////////  Transfer::Transfer()  /////////////////////////////
+-Transfer::Transfer(Log &amp;logger,
+-                   int fd, 
++Transfer::Transfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t maxBufferSize,
+                    capacity_t id) : 
+-   mLogger(logger),
+    mFd(fd),
+    mBuffer(buffer), 
+    mMaxBufferSize(maxBufferSize),
+@@ -74,7 +72,7 @@
+ 
+       if ((capacity_t)count &lt; remaining)
+       {
+-         mLogger.logNote(&quot;Read underrun -- read only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n&quot;, (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
++         errorMsg = strPrintf(&quot;Read underrun -- read only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n&quot;, (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
+       }
+       remaining -= count;
+    }
+@@ -107,7 +105,7 @@
+ 
+       if ((capacity_t)count &lt; remaining)
+       {
+-         mLogger.logNote(&quot;Write underrun -- wrote only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n&quot;, (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
++         errorMsg = strPrintf(&quot;Write underrun -- wrote only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n&quot;, (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
+       }
+       remaining -= count;
+    }
+
+Modified: trunk/src/Transfer.h
+===================================================================
+--- trunk/src/Transfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/Transfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -26,7 +26,6 @@
+ #include &lt;string&gt;
+ 
+ #include &quot;common.h&quot;
+-#include &quot;Log.h&quot;
+ #include &quot;TransferInfo.h&quot;
+ 
+ 
+@@ -52,8 +51,7 @@
+    };
+ 
+ public:
+-   Transfer(Log &amp;logger,
+-            int fd, 
++   Transfer(int fd, 
+             unsigned char *buffer, 
+             capacity_t maxBufferSize,
+             capacity_t id);
+@@ -72,7 +70,6 @@
+    Transfer(const Transfer&amp;); // Hide copy constructor.
+ 
+ protected:
+-   Log &mLogger;
+    int mFd;
+    unsigned char *mBuffer;
+    capacity_t mMaxBufferSize;
+
+Modified: trunk/src/TransferFactory.cpp
+===================================================================
+--- trunk/src/TransferFactory.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/TransferFactory.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -35,8 +35,7 @@
+ #include &quot;ZerosTransfer.h&quot;
+ 
+ ///////////////////  TransferFactory::createInstance()  ///////////////////////
+-Transfer *TransferFactory::createInstance(Log &amp;logger,
+-                                          Job::pattern_t pattern,
++Transfer *TransferFactory::createInstance(Job::pattern_t pattern,
+                                           int fd, 
+                                           unsigned char *buffer, 
+                                           capacity_t maxBufferSize,
+@@ -47,29 +46,25 @@
+    switch (pattern)
+    {
+    case Job::PATTERN_NONE:
+-      transferPtr = new GarbageTransfer(logger,
+-                                        fd, 
++      transferPtr = new GarbageTransfer(fd, 
+                                         buffer, 
+                                         maxBufferSize, 
+                                         id);
+       break;
+    case Job::PATTERN_ZEROS:
+-      transferPtr = new ZerosTransfer(logger,
+-                                      fd, 
++      transferPtr = new ZerosTransfer(fd, 
+                                       buffer, 
+                                       maxBufferSize, 
+                                       id);
+       break;
+    case Job::PATTERN_TRANSFER_NUMBERS:
+-      transferPtr = new NumbersTransfer(logger,
+-                                        fd, 
++      transferPtr = new NumbersTransfer(fd, 
+                                         buffer, 
+                                         maxBufferSize, 
+                                         id);
+       break;
+    case Job::PATTERN_RANDOM:
+-      transferPtr = new RandomTransfer(logger,
+-                                       fd, 
++      transferPtr = new RandomTransfer(fd, 
+                                        buffer, 
+                                        maxBufferSize, 
+                                        id, 
+
+Modified: trunk/src/TransferFactory.h
+===================================================================
+--- trunk/src/TransferFactory.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/TransferFactory.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,8 +34,7 @@
+ public:
+ 
+ public:
+-   static Transfer *createInstance(Log &amp;logger,
+-                                   Job::pattern_t pattern,
++   static Transfer *createInstance(Job::pattern_t pattern,
+                                    int fd, 
+                                    unsigned char *buffer, 
+                                    capacity_t maxBufferSize,
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/WriteJob.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -98,8 +98,7 @@
+       return EXIT_ERROR_SYSTEM;
+    }
+ 
+-   mTransfer = TransferFactory::createInstance(mLogger,
+-                                               mPattern,
++   mTransfer = TransferFactory::createInstance(mPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+@@ -138,6 +137,7 @@
+ 
+    this-&gt;setTransferStartTime();
+    mBytesTransferred = 0;
++	mLastErrorMsg = &quot;&quot;;
+    int exitCode = EXIT_OK;
+    for (capacity_t i = 0; i &lt; numTransfers; i++)
+    {
+
+Modified: trunk/src/ZerosTransfer.cpp
+===================================================================
+--- trunk/src/ZerosTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ZerosTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include &quot;ZerosTransfer.h&quot;
+ 
+ //////////////////////////  ZerosTransfer::ZerosTransfer()  ///////////////////
+-ZerosTransfer::ZerosTransfer(Log &amp;logger,
+-                             int fd, 
++ZerosTransfer::ZerosTransfer(int fd, 
+                              unsigned char *buffer, 
+                              capacity_t bufferSize,
+                              pid_t pid) : 
+-   Transfer(logger, fd, buffer, bufferSize, pid)
++   Transfer(fd, buffer, bufferSize, pid)
+ {
+    // Zero out buffer.  This buffer will not change during writes. 
+    memset(mBuffer, 0, mMaxBufferSize);
+
+Modified: trunk/src/ZerosTransfer.h
+===================================================================
+--- trunk/src/ZerosTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ZerosTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,7 +27,6 @@
+ 
+ #include &quot;common.h&quot;
+ #include &quot;Job.h&quot;
+-#include &quot;Log.h&quot;
+ #include &quot;Transfer.h&quot;
+ #include &quot;TransferInfo.h&quot;
+ 
+@@ -35,8 +34,7 @@
+ class ZerosTransfer: public Transfer
+ {
+ public:
+-   ZerosTransfer(Log &amp;logger,
+-                 int fd, 
++   ZerosTransfer(int fd, 
+                  unsigned char *buffer, 
+                  capacity_t bufferSize,
+                  pid_t pid);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000003.html">[Spew-changes] r58 - trunk/src
+</A></li>
+	<LI>Next message: <A HREF="000005.html">[Spew-changes] r60 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

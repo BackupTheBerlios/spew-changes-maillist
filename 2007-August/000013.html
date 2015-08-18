@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r68 - trunk/man
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r68%20-%20trunk/man&In-Reply-To=%3C200708210353.l7L3rhKX020394%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000014.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r68 - trunk/man</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r68%20-%20trunk/man&In-Reply-To=%3C200708210353.l7L3rhKX020394%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r68 - trunk/man">apers at mail.berlios.de
+       </A><BR>
+    <I>Tue Aug 21 05:53:43 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">[Spew-changes] r67 - trunk
+</A></li>
+        <LI>Next message: <A HREF="000014.html">[Spew-changes] r69 - in trunk: . man src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-08-21 05:53:42 +0200 (Tue, 21 Aug 2007)
+New Revision: 68
+
+Modified:
+   trunk/man/Makefile.am
+Log:
+Use correct automatic variable in man Makefile for spew.1 rule.
+
+
+Modified: trunk/man/Makefile.am
+===================================================================
+--- trunk/man/Makefile.am	2007-08-16 16:08:10 UTC (rev 67)
++++ trunk/man/Makefile.am	2007-08-21 03:53:42 UTC (rev 68)
+@@ -8,7 +8,7 @@
+ 
+ spew.1:		spew.1.in spew.1.include
+ 	sed -e 's!SPEW_VERSION!$(VERSION)!' \
+-	    -e 's!SYSCONFDIR!$(sysconfdir)!' $^ &gt;$@
++	    -e 's!SYSCONFDIR!$(sysconfdir)!' $&lt; &gt;$@
+ 
+ install-data-am:	install-man install-man-local
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">[Spew-changes] r67 - trunk
+</A></li>
+	<LI>Next message: <A HREF="000014.html">[Spew-changes] r69 - in trunk: . man src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

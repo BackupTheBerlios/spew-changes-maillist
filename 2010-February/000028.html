@@ -1,0 +1,317 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r83 - branches/threaded/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2010-February/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r83%20-%20branches/threaded/src&In-Reply-To=%3C201002280422.o1S4MoVp018520%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r83 - branches/threaded/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r83%20-%20branches/threaded/src&In-Reply-To=%3C201002280422.o1S4MoVp018520%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r83 - branches/threaded/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Sun Feb 28 05:22:50 CET 2010</I>
+    <P><UL>
+        
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#28">[ date ]</a>
+              <a href="thread.html#28">[ thread ]</a>
+              <a href="subject.html#28">[ subject ]</a>
+              <a href="author.html#28">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2010-02-28 05:22:49 +0100 (Sun, 28 Feb 2010)
+New Revision: 83
+
+Modified:
+   branches/threaded/src/Log.cpp
+   branches/threaded/src/NumbersTransfer.cpp
+   branches/threaded/src/RandomTransfer.cpp
+   branches/threaded/src/RandomTransferInfoList.cpp
+   branches/threaded/src/SpewConsole.cpp
+   branches/threaded/src/SpewTuiHelpWindow.cpp
+   branches/threaded/src/SpewTuiProgressWindow.cpp
+   branches/threaded/src/ZerosTransfer.cpp
+   branches/threaded/src/common.cpp
+   branches/threaded/src/common.h
+   branches/threaded/src/spew.cpp
+Log:
+Fixed various compile problem.
+
+
+Modified: branches/threaded/src/Log.cpp
+===================================================================
+--- branches/threaded/src/Log.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/Log.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,7 @@
+ #endif
+ 
+ #include &lt;stdio.h&gt;
++#include &lt;string.h&gt;
+ #include &lt;stdarg.h&gt;
+ #include &lt;errno.h&gt;
+ #include &lt;signal.h&gt;
+@@ -38,9 +39,9 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ ////////////////////////  Local constants  ////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////
+-int TIMESTAMP_STR_LEN = 19;  // Does not includes space for \0.
+-char LOGFILE_SEPARATOR_CHAR = '#';
+-int LOGFILE_WIDTH = 80;
++static const int TIMESTAMP_STR_LEN = 19;  // Does not includes space for \0.
++static const char LOGFILE_SEPARATOR_CHAR = '#';
++static const int LOGFILE_WIDTH = 80;
+ 
+ #ifdef USE_THREADS
+ //////////////////////////  Log::threadEntryPoint()  //////////////////////////
+
+Modified: branches/threaded/src/NumbersTransfer.cpp
+===================================================================
+--- branches/threaded/src/NumbersTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/NumbersTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include &lt;config.h&gt;
+ #endif
+ 
++#include &lt;string.h&gt;
+ #include &lt;unistd.h&gt;
+ #include &lt;errno.h&gt;
+ 
+
+Modified: branches/threaded/src/RandomTransfer.cpp
+===================================================================
+--- branches/threaded/src/RandomTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/RandomTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include &lt;config.h&gt;
+ #endif
+ 
++#include &lt;string.h&gt;
+ #include &lt;unistd.h&gt;
+ #include &lt;errno.h&gt;
+ 
+
+Modified: branches/threaded/src/RandomTransferInfoList.cpp
+===================================================================
+--- branches/threaded/src/RandomTransferInfoList.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/RandomTransferInfoList.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,8 @@
+ #include &lt;config.h&gt;
+ #endif
+ 
++#include &lt;string.h&gt;
++
+ #include &quot;common.h&quot;
+ #include &quot;Random.h&quot;
+ #include &quot;RandomTransferInfoList.h&quot;
+
+Modified: branches/threaded/src/SpewConsole.cpp
+===================================================================
+--- branches/threaded/src/SpewConsole.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewConsole.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,8 @@
+ #endif
+ 
+ #include &lt;stdio.h&gt;
++#include &lt;string.h&gt;
++
+ #include &quot;common.h&quot;
+ #include &quot;SpewConsole.h&quot;
+ #include &quot;TimeHack.h&quot;
+
+Modified: branches/threaded/src/SpewTuiHelpWindow.cpp
+===================================================================
+--- branches/threaded/src/SpewTuiHelpWindow.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewTuiHelpWindow.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -30,6 +30,8 @@
+ #include &lt;config.h&gt;
+ #endif
+ 
++#include &lt;string.h&gt;
++
+ #include &quot;common.h&quot;
+ #include &quot;SpewTuiWindow.h&quot;
+ #include &quot;SpewTuiHelpWindow.h&quot;
+
+Modified: branches/threaded/src/SpewTuiProgressWindow.cpp
+===================================================================
+--- branches/threaded/src/SpewTuiProgressWindow.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/SpewTuiProgressWindow.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -23,6 +23,7 @@
+ using namespace std;
+ 
+ #include &lt;stdio.h&gt;
++#include &lt;string.h&gt;
+ #include &lt;stdarg.h&gt;
+ #include &lt;ncurses.h&gt;
+ 
+
+Modified: branches/threaded/src/ZerosTransfer.cpp
+===================================================================
+--- branches/threaded/src/ZerosTransfer.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/ZerosTransfer.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -26,6 +26,7 @@
+ #include &lt;config.h&gt;
+ #endif
+ 
++#include &lt;string.h&gt;
+ #include &lt;unistd.h&gt;
+ #include &lt;errno.h&gt;
+ 
+
+Modified: branches/threaded/src/common.cpp
+===================================================================
+--- branches/threaded/src/common.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/common.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -27,6 +27,7 @@
+ #endif
+ 
+ #include &lt;stdio.h&gt;
++#include &lt;string.h&gt;
+ #include &lt;stdarg.h&gt;
+ #include &lt;unistd.h&gt;
+ #include &lt;math.h&gt;
+@@ -70,8 +71,8 @@
+ static const size_t MAX_STR_CHARS = 1024;
+ 
+ 
+-/////////////////////////  basename()  ///////////////////////////////////////
+-const char *basename(char *path)
++/////////////////////////  base_name()  ///////////////////////////////////////
++const char *base_name(char *path)
+ {
+    char *name = strrchr(path, '/');
+    if (name == NULL)
+
+Modified: branches/threaded/src/common.h
+===================================================================
+--- branches/threaded/src/common.h	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/common.h	2010-02-28 04:22:49 UTC (rev 83)
+@@ -53,12 +53,12 @@
+ ///////////////////////////  Typedefs  ///////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+ 
+-typedef enum Verbosity_t 
++typedef enum
+ {
+    VERBOSITY_NONE, 
+    VERBOSITY_SHORT, 
+    VERBOSITY_LONG,
+-};
++}  Verbosity_t;
+ 
+ typedef enum
+ {
+@@ -115,7 +115,7 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////  Functions  //////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+-const char *basename(char *path);
++const char *base_name(char *path);
+ string strPrintf(const char *fmt, ...);
+ string strSignal(int sig);
+ string strError(int error_number);
+
+Modified: branches/threaded/src/spew.cpp
+===================================================================
+--- branches/threaded/src/spew.cpp	2008-05-13 04:58:24 UTC (rev 82)
++++ branches/threaded/src/spew.cpp	2010-02-28 04:22:49 UTC (rev 83)
+@@ -142,13 +142,13 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ////////////////////  Function Prototypes  ///////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+-void error_msg(char *fmt, ...);
+-void note(char *fmt, ...);
++void error_msg(const char *fmt, ...);
++void note(const char *fmt, ...);
+ void usage();
+ bool parse_options(int argc, const char **argv, string&amp; cmdArgs);
+ bool validate_options();
+ void end_program(int exitCode);
+-void end_program(int exitCode, char *fmt, ...);
++void end_program(int exitCode, const char *fmt, ...);
+ void cumulative_statistics(const Job *job, 
+                            const CumulativeStatistics *cumStats);
+ void end_statistics(const CumulativeStatistics *cumStats);
+@@ -166,7 +166,7 @@
+ //////////////////////////////////////////////////////////////////////////////
+ 
+ ////////////////////////  error_msg()  ///////////////////////////////////////
+-void error_msg(char *fmt, ...)
++void error_msg(const char *fmt, ...)
+ {
+    fprintf(stderr, &quot;%s: &quot;, gPrgName);
+    va_list ap;
+@@ -178,7 +178,7 @@
+ 
+ 
+ /////////////////////////  note()  ///////////////////////////////////////////
+-void note(char *fmt, ...)
++void note(const char *fmt, ...)
+ {
+    va_list ap;
+    va_start(ap, fmt);
+@@ -277,7 +277,7 @@
+             PATTERN_LOOKUP[Job::PATTERN_RANDOM],
+             PATTERN_LOOKUP[Job::PATTERN_TRANSFER_NUMBERS],
+             PATTERN_LOOKUP[DEFAULT_PATTERN]);
+-   fprintf(stdout, outStr);
++   fprintf(stdout, &quot;%s&quot;, outStr);
+ 
+    fprintf(stdout, &quot;\nReport bugs to Andrew Patterson &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/spew-changes">andrew.patterson at hp.com</A>&gt;.\n&quot;);
+ }
+@@ -479,7 +479,7 @@
+       rcFilePath = &quot;&quot;;
+       if (strncmp(argv[i], &quot;--rcfile&quot;, 8) == 0)
+       {
+-         char *eqPos = strrchr(argv[i], '=');
++         const char *eqPos = strrchr(argv[i], '=');
+          if (eqPos == (char *)NULL)
+          {
+             if (i + 1 &lt; argc)
+@@ -900,7 +900,7 @@
+ 
+ 
+ //////////////////////////  end_program()  ////////////////////////////////////
+-void end_program(int exitCode, char *fmt, ...)
++void end_program(int exitCode, const char *fmt, ...)
+ {
+    int rtn;
+    char msg[MAX_TMP_STR_LEN];
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#28">[ date ]</a>
+              <a href="thread.html#28">[ thread ]</a>
+              <a href="subject.html#28">[ subject ]</a>
+              <a href="author.html#28">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

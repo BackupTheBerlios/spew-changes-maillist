@@ -1,0 +1,776 @@
+From apers at mail.berlios.de  Sat Jan 13 00:41:05 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sat, 13 Jan 2007 00:41:05 +0100
+Subject: [Spew-changes] r55 - web
+Message-ID: <200701122341.l0CNf5Yw001067@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-13 00:41:04 +0100 (Sat, 13 Jan 2007)
+New Revision: 55
+
+Modified:
+   web/index.html
+Log:
+Removed email address from page until I can get a new email address
+obfuscator that I like or www.jracademy.com comes back up.
+
+
+Modified: web/index.html
+===================================================================
+--- web/index.html	2006-09-29 23:51:05 UTC (rev 54)
++++ web/index.html	2007-01-12 23:41:04 UTC (rev 55)
+@@ -77,14 +77,17 @@
+           are designed to make it easy to find and debug data
+           integrity problems.<br></p>
+ 
+-          <div style="text-align: right;">
+-            --&nbsp; Andrew Patterson <a href=
++	  <div style="text-align: right;">
++            --&nbsp; Andrew Patterson
++<!-- <a href=
+             'javascript:cling("403%202808%203076%203617%20898%201222%202741%203761%203615%20898%201222%204%203590%201222%20898%204543%201751%202002%202253",4859,941)'
+             onmouseover="self.status=''; return true;" onmouseout=
+             "self.status=' '; return true;">&lt;<script type=
+             'text/javascript'>
+ owe("403 2808 3076 3617 898 1222 2741 3761 3615 898 1222 4 3590 1222 898 4543 1751 2002 2253",4859,941)
+ </script>&gt;</a><br>
++
++-->
+           </div>
+         </td>
+       </tr>
+@@ -715,7 +718,7 @@
+   <br>
+   <!-- Created: Wed Aug 18 15:57:26 MDT 2004 -->
+   <!-- hhmts start -->
+-Last modified: Tue Sep 20 17:21:46 MDT 2005
++Last modified: Fri Jan 12 16:38:54 MST 2007
+ <!-- hhmts end -->
+   <br>
+   <br>
+
+
+
+From apers at mail.berlios.de  Wed Jan 17 05:49:24 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Wed, 17 Jan 2007 05:49:24 +0100
+Subject: [Spew-changes] r56 - trunk/src
+Message-ID: <200701170449.l0H4nOhQ004053@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-17 05:49:24 +0100 (Wed, 17 Jan 2007)
+New Revision: 56
+
+Modified:
+   trunk/src/NumbersTransfer.cpp
+   trunk/src/RandomTransfer.cpp
+   trunk/src/ReadJob.cpp
+Log:
+Fixed several bugs dealing with reporting data integrity errors:
+  1. When using the -c|continue-after-error option, all subsequent transfers after
+     the initial error were reported at errors when using the -P|--progress option.
+  2. Offset into file for reported by errors was added twice.
+  3. Data range for integrity errors was reported in the log twice.
+  4. Transfers with data integrity errors were not added to the total data transferred
+     resulting in attempted reads past the end of file.
+
+
+Modified: trunk/src/NumbersTransfer.cpp
+===================================================================
+--- trunk/src/NumbersTransfer.cpp	2007-01-12 23:41:04 UTC (rev 55)
++++ trunk/src/NumbersTransfer.cpp	2007-01-17 04:49:24 UTC (rev 56)
+@@ -95,9 +95,8 @@
+          if (inErrorRange)
+          {
+             endingErrorRange = fileOffset + (i * datum_size) - 1;
+-            errors += strPrintf("\t%lld - %lld\n",
+-               startingErrorRange + (bufferSize * transferNumber), 
+-               endingErrorRange  + (bufferSize * transferNumber));
++            errors += strPrintf("\t%lld - %lld\n", 
++                                startingErrorRange, endingErrorRange);
+             inErrorRange = false;
+          }
+       }
+@@ -118,8 +117,8 @@
+    {
+       endingErrorRange = fileOffset + bufferSize - 1;
+       errors += strPrintf("\t%lld - %lld\n", 
+-                          startingErrorRange + (bufferSize * transferNumber),
+-                          endingErrorRange + (bufferSize * transferNumber));
++                          startingErrorRange,
++                          endingErrorRange);
+ 
+    }
+    if (errorsFound > 0)
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2007-01-12 23:41:04 UTC (rev 55)
++++ trunk/src/RandomTransfer.cpp	2007-01-17 04:49:24 UTC (rev 56)
+@@ -100,8 +100,8 @@
+          {
+             endingErrorRange = fileOffset + (i * sizeof(struct datum)) - 1;
+             errors += strPrintf("\t%lld - %lld\n",
+-               startingErrorRange + (bufferSize * transferNumber), 
+-               endingErrorRange  + (bufferSize * transferNumber));
++               startingErrorRange, 
++               endingErrorRange);
+             inErrorRange = false;
+          }
+       }
+@@ -122,8 +122,8 @@
+    {
+       endingErrorRange = fileOffset + bufferSize - 1;
+       errors += strPrintf("\t%lld - %lld\n", 
+-                          startingErrorRange + (bufferSize * transferNumber),
+-                          endingErrorRange + (bufferSize * transferNumber));
++                          startingErrorRange, 
++                          endingErrorRange);
+ 
+    }
+    if (errorsFound > 0)
+
+Modified: trunk/src/ReadJob.cpp
+===================================================================
+--- trunk/src/ReadJob.cpp	2007-01-12 23:41:04 UTC (rev 55)
++++ trunk/src/ReadJob.cpp	2007-01-17 04:49:24 UTC (rev 56)
+@@ -135,6 +135,7 @@
+ 
+    this->setTransferStartTime();
+    mBytesTransferred = 0;
++   mNumTransfersWithDataIntegrityErrors =0;
+    int exitCode = EXIT_OK;
+    for (capacity_t i = 0LLU; i < numTransfers; i++)
+    {
+@@ -155,11 +156,14 @@
+             mHackBytesTransferred += transferSize;
+          break;
+       case EXIT_ERROR_DATA_INTEGRITY:
++         mJobBytesTransferred += transferSize;
++         mBytesTransferred += transferSize;
++         if (mRunningHack)
++            mHackBytesTransferred += transferSize;
+          exitCode = EXIT_ERROR_DATA_INTEGRITY;
+          if (continueAfterError)
+          {
+             mNumTransfersWithDataIntegrityErrors++;
+-            mLogger.logError(mLastErrorMsg.c_str());
+          }
+          else
+          {
+
+
+
+From apers at mail.berlios.de  Wed Jan 17 06:04:55 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Wed, 17 Jan 2007 06:04:55 +0100
+Subject: [Spew-changes] r57 - in trunk: . man
+Message-ID: <200701170504.l0H54t4C004646@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-17 06:04:54 +0100 (Wed, 17 Jan 2007)
+New Revision: 57
+
+Modified:
+   trunk/configure.ac
+   trunk/man/spew.1.in
+Log:
+Changed version to indicate that this is a beta release.  The funny
+version number, "1.0.5.1-really-1.0.6beta", is used to prevent sorting
+problems on Debian."
+
+
+Modified: trunk/configure.ac
+===================================================================
+--- trunk/configure.ac	2007-01-17 04:49:24 UTC (rev 56)
++++ trunk/configure.ac	2007-01-17 05:04:54 UTC (rev 57)
+@@ -9,7 +9,7 @@
+ 
+ SPEW_AGE=1
+ SPEW_REVISION=0
+-SPEW_CURRENT=5
++SPEW_CURRENT=5.1-really-1.0.6beta
+ AC_SUBST(SPEW_AGE)
+ AC_SUBST(SPEW_REVISION)
+ AC_SUBST(SPEW_CURRENT)
+
+Modified: trunk/man/spew.1.in
+===================================================================
+--- trunk/man/spew.1.in	2007-01-17 04:49:24 UTC (rev 56)
++++ trunk/man/spew.1.in	2007-01-17 05:04:54 UTC (rev 57)
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.36.
+-.TH SPEW "1" "September 2006" "spew 1.0.5" "User Commands"
++.TH SPEW "1" "January 2007" "spew 1.0.5.1-really-1.0.6beta" "User Commands"
+ .SH NAME
+ spew \- measures I/O performance and/or generates I/O load
+ .SH SYNOPSIS
+@@ -170,7 +170,7 @@
+ Total number of bytes to transfer (must
+ be an even multiple of both
+ MIN_BUFFER_SIZE and MAX_BUFFER)SIZE).
+-TRANFSER_SIZE can be specified in
++TRANSFER_SIZE can be specified in
+ bytes, kilobytes, megabytes, or
+ gigabytes.
+ .TP
+
+
+
+From apers at mail.berlios.de  Thu Jan 18 02:30:10 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Thu, 18 Jan 2007 02:30:10 +0100
+Subject: [Spew-changes] r58 - trunk/src
+Message-ID: <200701180130.l0I1UA9r023385@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-18 02:30:05 +0100 (Thu, 18 Jan 2007)
+New Revision: 58
+
+Modified:
+   trunk/src/spew.cpp
+Log:
+Fixed IA-64 unaligned access problem when processing command-line options.
+
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2007-01-17 05:04:54 UTC (rev 57)
++++ trunk/src/spew.cpp	2007-01-18 01:30:05 UTC (rev 58)
+@@ -542,6 +542,7 @@
+    int writeArg = 0;
+    int readArg = 0;
+    int readAfterWriteArg = 0;
++   int seedArg = 0;
+    int helpArg = 0;
+    int usageArg = 0;
+    int iterationsArg = -1;
+@@ -580,7 +581,7 @@
+       {"rcfile", 0, POPT_ARG_STRING, &dummyArgStr, 0, "Read command-line options from RCFILE.", "RCFILE"},
+       {"read", 0, POPT_ARG_NONE, &readArg, 0, "Read date from FILE.", NULL},
+       {"read-after-write", 0, POPT_ARG_NONE, &readAfterWriteArg, 0, "Read back data after writing to FILE.", NULL},
+-      {"seed", 'S', POPT_ARG_LONG, &gSeed, 0, "Use SEED for random number seed.","SEED"},
++      {"seed", 'S', POPT_ARG_INT, &seedArg, 0, "Use SEED for random number seed.","SEED"},
+       {"sync", 's', POPT_ARG_NONE, &syncArg, 0, "Use synchronous I/O.", NULL},
+       {"statistics", 0, POPT_ARG_NONE, &statisticsArg, 0, "Output statistics (default).", NULL},
+       {"tui", 't', POPT_ARG_NONE, &tuiArg, 0, "Use curses-based, terminal user interface.", NULL},
+@@ -751,6 +752,10 @@
+    if (iterationsArg >= 0)
+       gIterationsToDo = (unsigned int)iterationsArg;
+ 
++   // Seed.
++   if (seedArg >= 0)
++      gSeed = (u32_t)seedArg;
++
+    // TUI.
+    if (noTuiArg)
+       gUseTui = false;
+
+
+
+From apers at mail.berlios.de  Sun Jan 21 08:26:55 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sun, 21 Jan 2007 08:26:55 +0100
+Subject: [Spew-changes] r59 - trunk/src
+Message-ID: <200701210726.l0L7Qtkn025582@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-21 08:26:54 +0100 (Sun, 21 Jan 2007)
+New Revision: 59
+
+Modified:
+   trunk/src/GarbageTransfer.cpp
+   trunk/src/GarbageTransfer.h
+   trunk/src/NumbersTransfer.cpp
+   trunk/src/NumbersTransfer.h
+   trunk/src/RandomTransfer.cpp
+   trunk/src/RandomTransfer.h
+   trunk/src/ReadJob.cpp
+   trunk/src/Transfer.cpp
+   trunk/src/Transfer.h
+   trunk/src/TransferFactory.cpp
+   trunk/src/TransferFactory.h
+   trunk/src/WriteJob.cpp
+   trunk/src/ZerosTransfer.cpp
+   trunk/src/ZerosTransfer.h
+Log:
+Fixed a bug where not all data integrity errors were being logged (They were still
+being detected).
+Moved error logging from Transfer* classes to *Job classes, which allowed me to 
+pull the Logging instance from these classes.
+
+
+Modified: trunk/src/GarbageTransfer.cpp
+===================================================================
+--- trunk/src/GarbageTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/GarbageTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include "GarbageTransfer.h"
+ 
+ //////////////////////////  GarbageTransfer::GarbageTransfer()  ///////////////
+-GarbageTransfer::GarbageTransfer(Log &logger,
+-                                 int fd, 
++GarbageTransfer::GarbageTransfer(int fd, 
+                                  unsigned char *buffer, 
+                                  capacity_t bufferSize,
+                                  capacity_t id) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+ }
+ 
+
+Modified: trunk/src/GarbageTransfer.h
+===================================================================
+--- trunk/src/GarbageTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/GarbageTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,15 +27,13 @@
+ 
+ #include "common.h"
+ #include "Job.h"
+-#include "Log.h"
+ #include "Transfer.h"
+ 
+ 
+ class GarbageTransfer: public Transfer
+ {
+ public:
+-   GarbageTransfer(Log &logger,
+-                   int fd, 
++   GarbageTransfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t bufferSize,
+                    capacity_t id);
+
+Modified: trunk/src/NumbersTransfer.cpp
+===================================================================
+--- trunk/src/NumbersTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/NumbersTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include "NumbersTransfer.h"
+ 
+ //////////////////////////  NumbersTransfer::NumbersTransfer()  ///////////////
+-NumbersTransfer::NumbersTransfer(Log &logger,
+-                                 int fd, 
++NumbersTransfer::NumbersTransfer(int fd, 
+                                  unsigned char *buffer, 
+                                  capacity_t bufferSize,
+                                  capacity_t id) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+ }
+ 
+
+Modified: trunk/src/NumbersTransfer.h
+===================================================================
+--- trunk/src/NumbersTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/NumbersTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,15 +27,13 @@
+ 
+ #include "common.h"
+ #include "Job.h"
+-#include "Log.h"
+ #include "Transfer.h"
+ 
+ 
+ class NumbersTransfer: public Transfer
+ {
+ public:
+-   NumbersTransfer(Log &logger,
+-                   int fd, 
++   NumbersTransfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t bufferSize,
+                    capacity_t id);
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/RandomTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,13 +34,12 @@
+ #include "RandomTransfer.h"
+ 
+ //////////////////////////  RandomTransfer::RandomTransfer()  /////////////////
+-RandomTransfer::RandomTransfer(Log &logger,
+-                               int fd, 
++RandomTransfer::RandomTransfer(int fd, 
+                                unsigned char *buffer, 
+                                capacity_t bufferSize,
+                                capacity_t id,
+                                u32_t seed) : 
+-   Transfer(logger, fd, buffer, bufferSize, id)
++   Transfer(fd, buffer, bufferSize, id)
+ {
+    mRnd.setSeed(seed);
+ }
+
+Modified: trunk/src/RandomTransfer.h
+===================================================================
+--- trunk/src/RandomTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/RandomTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,7 +27,6 @@
+ 
+ #include "common.h"
+ #include "Job.h"
+-#include "Log.h"
+ #include "Transfer.h"
+ #include "Random.h"
+ 
+@@ -35,8 +34,7 @@
+ class RandomTransfer: public Transfer
+ {
+ public:
+-   RandomTransfer(Log &logger,
+-                  int fd, 
++   RandomTransfer(int fd, 
+                   unsigned char *buffer, 
+                   capacity_t bufferSize,
+                   capacity_t id,
+
+Modified: trunk/src/ReadJob.cpp
+===================================================================
+--- trunk/src/ReadJob.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ReadJob.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -98,8 +98,7 @@
+       return EXIT_ERROR_SYSTEM;
+    }
+ 
+-   mTransfer = TransferFactory::createInstance(mLogger,
+-                                               mPattern,
++   mTransfer = TransferFactory::createInstance(mPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+@@ -135,7 +134,8 @@
+ 
+    this->setTransferStartTime();
+    mBytesTransferred = 0;
+-   mNumTransfersWithDataIntegrityErrors =0;
++   mNumTransfersWithDataIntegrityErrors = 0;
++   mLastErrorMsg = "";
+    int exitCode = EXIT_OK;
+    for (capacity_t i = 0LLU; i < numTransfers; i++)
+    {
+@@ -163,6 +163,8 @@
+          exitCode = EXIT_ERROR_DATA_INTEGRITY;
+          if (continueAfterError)
+          {
++            mLogger.logNote(mLastErrorMsg.c_str());
++            mLastErrorMsg = "";
+             mNumTransfersWithDataIntegrityErrors++;
+          }
+          else
+
+Modified: trunk/src/Transfer.cpp
+===================================================================
+--- trunk/src/Transfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/Transfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,10 @@
+ #include "Transfer.h"
+ 
+ //////////////////////////  Transfer::Transfer()  /////////////////////////////
+-Transfer::Transfer(Log &logger,
+-                   int fd, 
++Transfer::Transfer(int fd, 
+                    unsigned char *buffer, 
+                    capacity_t maxBufferSize,
+                    capacity_t id) : 
+-   mLogger(logger),
+    mFd(fd),
+    mBuffer(buffer), 
+    mMaxBufferSize(maxBufferSize),
+@@ -74,7 +72,7 @@
+ 
+       if ((capacity_t)count < remaining)
+       {
+-         mLogger.logNote("Read underrun -- read only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n", (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
++         errorMsg = strPrintf("Read underrun -- read only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n", (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
+       }
+       remaining -= count;
+    }
+@@ -107,7 +105,7 @@
+ 
+       if ((capacity_t)count < remaining)
+       {
+-         mLogger.logNote("Write underrun -- wrote only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n", (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
++         errorMsg = strPrintf("Write underrun -- wrote only %llu bytes of %llu bytes at offset %llu during transfer %llu.\n", (capacity_t)count, bufferSize,  offset + bufferSize - remaining, transferNumber); 
+       }
+       remaining -= count;
+    }
+
+Modified: trunk/src/Transfer.h
+===================================================================
+--- trunk/src/Transfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/Transfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -26,7 +26,6 @@
+ #include <string>
+ 
+ #include "common.h"
+-#include "Log.h"
+ #include "TransferInfo.h"
+ 
+ 
+@@ -52,8 +51,7 @@
+    };
+ 
+ public:
+-   Transfer(Log &logger,
+-            int fd, 
++   Transfer(int fd, 
+             unsigned char *buffer, 
+             capacity_t maxBufferSize,
+             capacity_t id);
+@@ -72,7 +70,6 @@
+    Transfer(const Transfer&); // Hide copy constructor.
+ 
+ protected:
+-   Log &mLogger;
+    int mFd;
+    unsigned char *mBuffer;
+    capacity_t mMaxBufferSize;
+
+Modified: trunk/src/TransferFactory.cpp
+===================================================================
+--- trunk/src/TransferFactory.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/TransferFactory.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -35,8 +35,7 @@
+ #include "ZerosTransfer.h"
+ 
+ ///////////////////  TransferFactory::createInstance()  ///////////////////////
+-Transfer *TransferFactory::createInstance(Log &logger,
+-                                          Job::pattern_t pattern,
++Transfer *TransferFactory::createInstance(Job::pattern_t pattern,
+                                           int fd, 
+                                           unsigned char *buffer, 
+                                           capacity_t maxBufferSize,
+@@ -47,29 +46,25 @@
+    switch (pattern)
+    {
+    case Job::PATTERN_NONE:
+-      transferPtr = new GarbageTransfer(logger,
+-                                        fd, 
++      transferPtr = new GarbageTransfer(fd, 
+                                         buffer, 
+                                         maxBufferSize, 
+                                         id);
+       break;
+    case Job::PATTERN_ZEROS:
+-      transferPtr = new ZerosTransfer(logger,
+-                                      fd, 
++      transferPtr = new ZerosTransfer(fd, 
+                                       buffer, 
+                                       maxBufferSize, 
+                                       id);
+       break;
+    case Job::PATTERN_TRANSFER_NUMBERS:
+-      transferPtr = new NumbersTransfer(logger,
+-                                        fd, 
++      transferPtr = new NumbersTransfer(fd, 
+                                         buffer, 
+                                         maxBufferSize, 
+                                         id);
+       break;
+    case Job::PATTERN_RANDOM:
+-      transferPtr = new RandomTransfer(logger,
+-                                       fd, 
++      transferPtr = new RandomTransfer(fd, 
+                                        buffer, 
+                                        maxBufferSize, 
+                                        id, 
+
+Modified: trunk/src/TransferFactory.h
+===================================================================
+--- trunk/src/TransferFactory.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/TransferFactory.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,8 +34,7 @@
+ public:
+ 
+ public:
+-   static Transfer *createInstance(Log &logger,
+-                                   Job::pattern_t pattern,
++   static Transfer *createInstance(Job::pattern_t pattern,
+                                    int fd, 
+                                    unsigned char *buffer, 
+                                    capacity_t maxBufferSize,
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/WriteJob.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -98,8 +98,7 @@
+       return EXIT_ERROR_SYSTEM;
+    }
+ 
+-   mTransfer = TransferFactory::createInstance(mLogger,
+-                                               mPattern,
++   mTransfer = TransferFactory::createInstance(mPattern,
+                                                mFd,
+                                                mBuffer, 
+                                                mMaxBufferSize, 
+@@ -138,6 +137,7 @@
+ 
+    this->setTransferStartTime();
+    mBytesTransferred = 0;
++	mLastErrorMsg = "";
+    int exitCode = EXIT_OK;
+    for (capacity_t i = 0; i < numTransfers; i++)
+    {
+
+Modified: trunk/src/ZerosTransfer.cpp
+===================================================================
+--- trunk/src/ZerosTransfer.cpp	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ZerosTransfer.cpp	2007-01-21 07:26:54 UTC (rev 59)
+@@ -34,12 +34,11 @@
+ #include "ZerosTransfer.h"
+ 
+ //////////////////////////  ZerosTransfer::ZerosTransfer()  ///////////////////
+-ZerosTransfer::ZerosTransfer(Log &logger,
+-                             int fd, 
++ZerosTransfer::ZerosTransfer(int fd, 
+                              unsigned char *buffer, 
+                              capacity_t bufferSize,
+                              pid_t pid) : 
+-   Transfer(logger, fd, buffer, bufferSize, pid)
++   Transfer(fd, buffer, bufferSize, pid)
+ {
+    // Zero out buffer.  This buffer will not change during writes. 
+    memset(mBuffer, 0, mMaxBufferSize);
+
+Modified: trunk/src/ZerosTransfer.h
+===================================================================
+--- trunk/src/ZerosTransfer.h	2007-01-18 01:30:05 UTC (rev 58)
++++ trunk/src/ZerosTransfer.h	2007-01-21 07:26:54 UTC (rev 59)
+@@ -27,7 +27,6 @@
+ 
+ #include "common.h"
+ #include "Job.h"
+-#include "Log.h"
+ #include "Transfer.h"
+ #include "TransferInfo.h"
+ 
+@@ -35,8 +34,7 @@
+ class ZerosTransfer: public Transfer
+ {
+ public:
+-   ZerosTransfer(Log &logger,
+-                 int fd, 
++   ZerosTransfer(int fd, 
+                  unsigned char *buffer, 
+                  capacity_t bufferSize,
+                  pid_t pid);
+
+
+
+From apers at mail.berlios.de  Sun Jan 21 09:03:18 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Sun, 21 Jan 2007 09:03:18 +0100
+Subject: [Spew-changes] r60 - trunk/src
+Message-ID: <200701210803.l0L83Ium027385@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-21 09:03:18 +0100 (Sun, 21 Jan 2007)
+New Revision: 60
+
+Modified:
+   trunk/src/SpewConsole.cpp
+Log:
+Fixed typo.
+
+
+Modified: trunk/src/SpewConsole.cpp
+===================================================================
+--- trunk/src/SpewConsole.cpp	2007-01-21 07:26:54 UTC (rev 59)
++++ trunk/src/SpewConsole.cpp	2007-01-21 08:03:18 UTC (rev 60)
+@@ -230,7 +230,7 @@
+    switch (mCurrentIoDirection)
+    {
+    case READING:
+-      printf("RTR: %11.2Lf %-5s   Tranfser time: %s    IOPS: %11.2Lf\n",
++      printf("RTR: %11.2Lf %-5s   Transfer time: %s    IOPS: %11.2Lf\n",
+              transferRate, 
+              getTransferRateUnitsStr(mCurrentUnits), 
+              jobTransferTime.getElapsedTimeStr().c_str(),
+
+
+
+From apers at mail.berlios.de  Mon Jan 22 01:32:43 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Mon, 22 Jan 2007 01:32:43 +0100
+Subject: [Spew-changes] r61 - trunk/src
+Message-ID: <200701220032.l0M0WhxG021415@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-22 01:32:43 +0100 (Mon, 22 Jan 2007)
+New Revision: 61
+
+Modified:
+   trunk/src/Transfer.h
+Log:
+Fix for bug #9777
+
+Use HAVE_DIRECT_IO instead of __linux when checking for direct I/O
+support.  This is a fix for building on GNU/kFreeBSD Debian with a FreeBSD kernel).
+
+
+Modified: trunk/src/Transfer.h
+===================================================================
+--- trunk/src/Transfer.h	2007-01-21 08:03:18 UTC (rev 60)
++++ trunk/src/Transfer.h	2007-01-22 00:32:43 UTC (rev 61)
+@@ -34,7 +34,7 @@
+ public:
+    static const capacity_t BUFFER_SIZE_INCREMENT = 512LLU;
+    static const capacity_t OFFSET_INCREMENT = BUFFER_SIZE_INCREMENT;
+-#ifdef __linux
++#ifdef HAVE_DIRECT_IO
+    static const capacity_t DIRECTIO_BUFFER_SIZE_INCREMENT = 1024LLU;
+ #endif
+ 
+
+
+
+From apers at mail.berlios.de  Mon Jan 22 01:43:16 2007
+From: apers at mail.berlios.de (apers at BerliOS)
+Date: Mon, 22 Jan 2007 01:43:16 +0100
+Subject: [Spew-changes] r62 - in trunk: . man
+Message-ID: <200701220043.l0M0hG7n022122@sheep.berlios.de>
+
+Author: apers
+Date: 2007-01-22 01:43:15 +0100 (Mon, 22 Jan 2007)
+New Revision: 62
+
+Modified:
+   trunk/configure.ac
+   trunk/man/spew.1.in
+Log:
+Bumped beta release number to 1.0.5.2.
+
+
+Modified: trunk/configure.ac
+===================================================================
+--- trunk/configure.ac	2007-01-22 00:32:43 UTC (rev 61)
++++ trunk/configure.ac	2007-01-22 00:43:15 UTC (rev 62)
+@@ -9,7 +9,7 @@
+ 
+ SPEW_AGE=1
+ SPEW_REVISION=0
+-SPEW_CURRENT=5.1-really-1.0.6beta
++SPEW_CURRENT=5.2-really-1.0.6beta
+ AC_SUBST(SPEW_AGE)
+ AC_SUBST(SPEW_REVISION)
+ AC_SUBST(SPEW_CURRENT)
+
+Modified: trunk/man/spew.1.in
+===================================================================
+--- trunk/man/spew.1.in	2007-01-22 00:32:43 UTC (rev 61)
++++ trunk/man/spew.1.in	2007-01-22 00:43:15 UTC (rev 62)
+@@ -1,5 +1,5 @@
+ .\" DO NOT MODIFY THIS FILE!  It was generated by help2man 1.36.
+-.TH SPEW "1" "January 2007" "spew 1.0.5.1-really-1.0.6beta" "User Commands"
++.TH SPEW "1" "January 2007" "spew 1.0.5.2-really-1.0.6beta" "User Commands"
+ .SH NAME
+ spew \- measures I/O performance and/or generates I/O load
+ .SH SYNOPSIS
+
+
+

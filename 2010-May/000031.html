@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r86 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2010-May/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r86%20-%20trunk/src&In-Reply-To=%3C201005140517.o4E5HGTO026034%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000030.html">
+   <LINK REL="Next"  HREF="000032.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r86 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r86%20-%20trunk/src&In-Reply-To=%3C201005140517.o4E5HGTO026034%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r86 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Fri May 14 07:17:16 CEST 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000030.html">[Spew-changes] r85 - trunk
+</A></li>
+        <LI>Next message: <A HREF="000032.html">[Spew-changes] r87 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2010-05-14 07:17:14 +0200 (Fri, 14 May 2010)
+New Revision: 86
+
+Modified:
+   trunk/src/spew.cpp
+Log:
+Rest seed after every iteration so we don't get a repetitive read/write
+pattern.
+
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2010-05-14 04:51:12 UTC (rev 85)
++++ trunk/src/spew.cpp	2010-05-14 05:17:14 UTC (rev 86)
+@@ -1360,6 +1360,8 @@
+ void run(operation_enum operation)
+ {
+    int ret;
++   u32_t iterationSeed = gSeed;
++   Random rnd(gSeed);
+ 
+    gCurrentIteration = 0;
+    do
+@@ -1379,7 +1381,7 @@
+                                  gUserPattern,
+                                  gFillMethod,
+                                  gIOMethod,
+-                                 gSeed,
++                                 iterationSeed,
+                                  gJobId);
+          if (job == (Job *)NULL)
+          {
+@@ -1418,7 +1420,7 @@
+                                 gUserPattern,
+                                 gFillMethod,
+                                 gIOMethod,
+-                                gSeed,
++                                iterationSeed,
+                                 gJobId);
+          if (job == (Job *)NULL)
+          {
+@@ -1439,6 +1441,7 @@
+             gDisplay-&gt;nextJob();
+          }
+       }
++	  iterationSeed = rnd.getRandom32();
+ 
+    } while (gIterationsToDo == 0LLU || gCurrentIteration &lt; gIterationsToDo);
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000030.html">[Spew-changes] r85 - trunk
+</A></li>
+	<LI>Next message: <A HREF="000032.html">[Spew-changes] r87 - in trunk: . man
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

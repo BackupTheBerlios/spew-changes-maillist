@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r84 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2010-May/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r84%20-%20trunk/src&In-Reply-To=%3C201005140449.o4E4nXBn010492%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000030.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r84 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r84%20-%20trunk/src&In-Reply-To=%3C201005140449.o4E4nXBn010492%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r84 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Fri May 14 06:49:33 CEST 2010</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000030.html">[Spew-changes] r85 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#29">[ date ]</a>
+              <a href="thread.html#29">[ thread ]</a>
+              <a href="subject.html#29">[ subject ]</a>
+              <a href="author.html#29">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2010-05-14 06:49:31 +0200 (Fri, 14 May 2010)
+New Revision: 84
+
+Modified:
+   trunk/src/common.cpp
+   trunk/src/common.h
+Log:
+Only use basename if one is not already defined.
+
+
+Modified: trunk/src/common.cpp
+===================================================================
+--- trunk/src/common.cpp	2010-02-28 04:22:49 UTC (rev 83)
++++ trunk/src/common.cpp	2010-05-14 04:49:31 UTC (rev 84)
+@@ -71,6 +71,7 @@
+ static const size_t MAX_STR_CHARS = 1024;
+ 
+ 
++#if !HAVE_BASENAME
+ /////////////////////////  basename()  ///////////////////////////////////////
+ const char *basename(char *path)
+ {
+@@ -80,6 +81,7 @@
+    else
+       return name + 1;
+ }
++#endif
+ 
+ 
+ #ifdef HAVE_MOUNT_CHECK
+
+Modified: trunk/src/common.h
+===================================================================
+--- trunk/src/common.h	2010-02-28 04:22:49 UTC (rev 83)
++++ trunk/src/common.h	2010-05-14 04:49:31 UTC (rev 84)
+@@ -108,7 +108,9 @@
+ //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////  Functions  //////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
++#if !HAVE_BASENAME
+ const char *basename(char *path);
++#endif
+ string strPrintf(const char *fmt, ...);
+ string strSignal(int sig);
+ string strError(int error_number);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000030.html">[Spew-changes] r85 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#29">[ date ]</a>
+              <a href="thread.html#29">[ thread ]</a>
+              <a href="subject.html#29">[ subject ]</a>
+              <a href="author.html#29">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

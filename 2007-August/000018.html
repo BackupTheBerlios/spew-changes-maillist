@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r73 - web
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r73%20-%20web&In-Reply-To=%3C200708220417.l7M4HRpt019266%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000017.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r73 - web</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r73%20-%20web&In-Reply-To=%3C200708220417.l7M4HRpt019266%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r73 - web">apers at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 22 06:17:27 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000017.html">[Spew-changes] r72 - branches/threaded/src
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-08-22 06:17:26 +0200 (Wed, 22 Aug 2007)
+New Revision: 73
+
+Modified:
+   web/index.html
+Log:
+Updated web-pages for 1.0.6 release.
+
+
+Modified: web/index.html
+===================================================================
+--- web/index.html	2007-08-22 03:40:40 UTC (rev 72)
++++ web/index.html	2007-08-22 04:17:26 UTC (rev 73)
+@@ -143,6 +143,19 @@
+             &lt;tbody&gt;
+ 
+               &lt;tr&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;21-Aug-07&lt;/td&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;Spew 1.0.6 released.&lt;br&gt;
++		Minor bug fixes.&lt;br&gt;
++                Joe Eiler contributed a patch that adds new patterns
++                -- ones, zeros, alt, and user defined. These patterns
++                are all variations of the zeros pattern, but instead
++                0's, 1's, 0xaa's, or any number between 0 and 255 are
++                used in the buffer.&lt;br&gt;
++		Ported to IA-64 HPUX 11.
++		&lt;/td&gt;
++              &lt;/tr&gt;
++
++              &lt;tr&gt;
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;20-Sep-05&lt;/td&gt;
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;Spew 1.0.5 released.&lt;br&gt;
+ 		Fixed bugs in read IOPS and intermediate (--progress) statistics.
+@@ -200,6 +213,21 @@
+             &lt;tbody&gt;
+               &lt;tr&gt;
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;&lt;a href=
++                &quot;<A HREF="ftp://ftp.berlios.de/pub/spew/1.0.6/index.html">ftp://ftp.berlios.de/pub/spew/1.0.6/index.html</A>&quot;&gt;spew-1.0.6&lt;/a&gt;&lt;br&gt;
++                &lt;/td&gt;
++
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;Minor bug fixes.&lt;br&gt;
++                Joe Eiler contributed a patch that adds new patterns
++                -- ones, zeros, alt, and user defined. These patterns
++                are all variations of the zeros pattern, but instead
++                0's, 1's, 0xaa's, or any number between 0 and 255 are
++                used in the buffer.&lt;br&gt;
++		Ported to IA-64 HPUX 11.
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;stable&lt;br&gt;&lt;/td&gt;
++              &lt;/tr&gt;
++
++              &lt;tr&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;&lt;a href=
+                 &quot;<A HREF="ftp://ftp.berlios.de/pub/spew/1.0.5/index.html">ftp://ftp.berlios.de/pub/spew/1.0.5/index.html</A>&quot;&gt;spew-1.0.5&lt;/a&gt;&lt;br&gt;
+                 &lt;/td&gt;
+ 
+@@ -279,7 +307,7 @@
+               &lt;/tr&gt;
+               &lt;tr&gt;
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;&lt;a href=
+-                &quot;<A HREF="http://svn.berlios.de/viewcvs/spew/tags/1.0.5/">http://svn.berlios.de/viewcvs/spew/tags/1.0.5/</A>&quot;&gt;1.0.5&lt;/a&gt;&lt;br&gt;
++                &quot;<A HREF="http://svn.berlios.de/viewcvs/spew/tags/1.0.6/">http://svn.berlios.de/viewcvs/spew/tags/1.0.6/</A>&quot;&gt;1.0.6&lt;/a&gt;&lt;br&gt;
+                 &lt;/td&gt;
+                 &lt;/td&gt;
+ 		  &lt;td style=&quot;vertical-align: top;&quot;&gt;Latest release&lt;/a&gt;&lt;br&gt;
+@@ -287,6 +315,14 @@
+               &lt;/tr&gt;
+               &lt;tr&gt;
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;&lt;a href=
++                &quot;<A HREF="http://svn.berlios.de/viewcvs/spew/tags/1.0.5/">http://svn.berlios.de/viewcvs/spew/tags/1.0.5/</A>&quot;&gt;1.0.5&lt;/a&gt;&lt;br&gt;
++                &lt;/td&gt;
++                &lt;/td&gt;
++		  &lt;td style=&quot;vertical-align: top;&quot;&gt;Obsolete&lt;/a&gt;&lt;br&gt;
++                &lt;/td&gt;
++              &lt;/tr&gt;
++              &lt;tr&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;&lt;a href=
+                 &quot;<A HREF="http://svn.berlios.de/viewcvs/spew/tags/1.0.4/">http://svn.berlios.de/viewcvs/spew/tags/1.0.4/</A>&quot;&gt;1.0.4&lt;/a&gt;&lt;br&gt;
+                 &lt;/td&gt;
+                 &lt;/td&gt;
+@@ -497,7 +533,7 @@
+ terabytes(T).&lt;/dd&gt;
+ &lt;dt&gt;PATTERN&lt;/dt&gt;
+ &lt;dd&gt;Data pattern used when writing/reading data. Available patterns
+-are: none, zeros, random, and numbers. The default pattern is
++are: none, zeros, ones, alt, random, numbers, and &quot;#&quot; (where &quot;#&quot; is a number between 0-255). The default pattern is
+ none.&lt;/dd&gt;
+ &lt;dt&gt;RCFILE&lt;/dt&gt;
+ &lt;dd&gt;Read additional command-line options from RCFILE. Other options
+@@ -718,7 +754,7 @@
+   &lt;br&gt;
+   &lt;!-- Created: Wed Aug 18 15:57:26 MDT 2004 --&gt;
+   &lt;!-- hhmts start --&gt;
+-Last modified: Fri Jan 12 16:38:54 MST 2007
++Last modified: Tue Aug 21 21:56:27 MDT 2007
+ &lt;!-- hhmts end --&gt;
+   &lt;br&gt;
+   &lt;br&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000017.html">[Spew-changes] r72 - branches/threaded/src
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>

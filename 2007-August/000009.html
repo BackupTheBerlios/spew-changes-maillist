@@ -1,0 +1,557 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Spew-changes] r64 - trunk/src
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/spew-changes/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r64%20-%20trunk/src&In-Reply-To=%3C200708060311.l763Botn003591%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000010.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Spew-changes] r64 - trunk/src</H1>
+    <B>apers at BerliOS</B> 
+    <A HREF="mailto:spew-changes%40lists.berlios.de?Subject=Re%3A%20%5BSpew-changes%5D%20r64%20-%20trunk/src&In-Reply-To=%3C200708060311.l763Botn003591%40sheep.berlios.de%3E"
+       TITLE="[Spew-changes] r64 - trunk/src">apers at mail.berlios.de
+       </A><BR>
+    <I>Mon Aug  6 05:11:50 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000010.html">[Spew-changes] r65 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: apers
+Date: 2007-08-06 05:11:46 +0200 (Mon, 06 Aug 2007)
+New Revision: 64
+
+Modified:
+   trunk/src/BytePatternTransfer.cpp
+   trunk/src/GarbageTransfer.cpp
+   trunk/src/Job.cpp
+   trunk/src/Log.cpp
+   trunk/src/NumbersTransfer.cpp
+   trunk/src/Random.cpp
+   trunk/src/RandomTransfer.cpp
+   trunk/src/RandomTransferInfoList.cpp
+   trunk/src/ReadJob.cpp
+   trunk/src/SequentialTransferInfoList.cpp
+   trunk/src/SpewConsole.cpp
+   trunk/src/SpewDisplay.cpp
+   trunk/src/SpewTui.cpp
+   trunk/src/SpewTuiHelpWindow.cpp
+   trunk/src/SpewTuiProgressWindow.cpp
+   trunk/src/SpewTuiStatisticsWindow.cpp
+   trunk/src/SpewTuiStatusWindow.cpp
+   trunk/src/SpewTuiWindow.cpp
+   trunk/src/SpewerTui.cpp
+   trunk/src/SpewerTuiStatisticsWindow.cpp
+   trunk/src/TimeHack.cpp
+   trunk/src/Transfer.cpp
+   trunk/src/TransferFactory.cpp
+   trunk/src/TransferInfo.cpp
+   trunk/src/TransferInfoList.cpp
+   trunk/src/TransferInfoListFactory.cpp
+   trunk/src/Tui.cpp
+   trunk/src/WriteJob.cpp
+   trunk/src/ZerosTransfer.cpp
+   trunk/src/common.cpp
+   trunk/src/spew.cpp
+   trunk/src/spewer.cpp
+Log:
+HP-UX aCC complains about not the std namespace not being declared before
+is is &quot;used&quot; in &quot;using namespace std;&quot;.  According to:
+
+  <A HREF="http://coding.derkeiler.com/Archive/C_CPP/comp.lang.cpp/2004-11/3086.html">http://coding.derkeiler.com/Archive/C_CPP/comp.lang.cpp/2004-11/3086.html</A>
+
+this construct is more correct and is compatible with gcc. Changed all
+these lines to:
+
+  namespace std {} using namespace std;
+
+
+
+Modified: trunk/src/BytePatternTransfer.cpp
+===================================================================
+--- trunk/src/BytePatternTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/BytePatternTransfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/GarbageTransfer.cpp
+===================================================================
+--- trunk/src/GarbageTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/GarbageTransfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/Job.cpp
+===================================================================
+--- trunk/src/Job.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/Job.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/Log.cpp
+===================================================================
+--- trunk/src/Log.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/Log.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/NumbersTransfer.cpp
+===================================================================
+--- trunk/src/NumbersTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/NumbersTransfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/Random.cpp
+===================================================================
+--- trunk/src/Random.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/Random.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/RandomTransfer.cpp
+===================================================================
+--- trunk/src/RandomTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/RandomTransfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/RandomTransferInfoList.cpp
+===================================================================
+--- trunk/src/RandomTransferInfoList.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/RandomTransferInfoList.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/ReadJob.cpp
+===================================================================
+--- trunk/src/ReadJob.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/ReadJob.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SequentialTransferInfoList.cpp
+===================================================================
+--- trunk/src/SequentialTransferInfoList.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SequentialTransferInfoList.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SpewConsole.cpp
+===================================================================
+--- trunk/src/SpewConsole.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewConsole.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SpewDisplay.cpp
+===================================================================
+--- trunk/src/SpewDisplay.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewDisplay.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SpewTui.cpp
+===================================================================
+--- trunk/src/SpewTui.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTui.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SpewTuiHelpWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiHelpWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTuiHelpWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/SpewTuiProgressWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiProgressWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTuiProgressWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/SpewTuiStatisticsWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiStatisticsWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTuiStatisticsWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/SpewTuiStatusWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiStatusWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTuiStatusWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/SpewTuiWindow.cpp
+===================================================================
+--- trunk/src/SpewTuiWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewTuiWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/SpewerTui.cpp
+===================================================================
+--- trunk/src/SpewerTui.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewerTui.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/SpewerTuiStatisticsWindow.cpp
+===================================================================
+--- trunk/src/SpewerTuiStatisticsWindow.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/SpewerTuiStatisticsWindow.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdarg.h&gt;
+
+Modified: trunk/src/TimeHack.cpp
+===================================================================
+--- trunk/src/TimeHack.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/TimeHack.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/Transfer.cpp
+===================================================================
+--- trunk/src/Transfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/Transfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/TransferFactory.cpp
+===================================================================
+--- trunk/src/TransferFactory.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/TransferFactory.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/TransferInfo.cpp
+===================================================================
+--- trunk/src/TransferInfo.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/TransferInfo.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/TransferInfoList.cpp
+===================================================================
+--- trunk/src/TransferInfoList.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/TransferInfoList.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/TransferInfoListFactory.cpp
+===================================================================
+--- trunk/src/TransferInfoListFactory.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/TransferInfoListFactory.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/Tui.cpp
+===================================================================
+--- trunk/src/Tui.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/Tui.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/WriteJob.cpp
+===================================================================
+--- trunk/src/WriteJob.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/WriteJob.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/ZerosTransfer.cpp
+===================================================================
+--- trunk/src/ZerosTransfer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/ZerosTransfer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/common.cpp
+===================================================================
+--- trunk/src/common.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/common.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/spew.cpp
+===================================================================
+--- trunk/src/spew.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/spew.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -20,7 +20,7 @@
+ // with this program; if not, write to the Free Software Foundation, Inc.,
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+Modified: trunk/src/spewer.cpp
+===================================================================
+--- trunk/src/spewer.cpp	2007-07-20 21:59:49 UTC (rev 63)
++++ trunk/src/spewer.cpp	2007-08-06 03:11:46 UTC (rev 64)
+@@ -21,7 +21,7 @@
+ // 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ 
+-using namespace std;
++namespace std {} using namespace std;
+ 
+ #ifdef HAVE_CONFIG_H
+ #include &lt;config.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000010.html">[Spew-changes] r65 - trunk/src
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/spew-changes">More information about the Spew-changes
+mailing list</a><br>
+</body></html>
